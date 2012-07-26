@@ -59,6 +59,7 @@ class Shield
         ini_set('session.save_handler', 'files');
         $session = new Session($this->di);
         session_start();
+        $this->di->register($session);
 
         // grab our input & filter
         $input  = new Input($this->di);
@@ -76,7 +77,7 @@ class Shield
 
         $this->di->register(
             array(
-                $input,$filter,$session,
+                $input,$filter,
                 $config,$this->view,$this->_log
             )
         );

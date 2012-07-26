@@ -20,7 +20,7 @@ class Session extends Base
      * Salt for hashing the session data
      * @var string
      */
-    private $_salt          = 't3st1ng#@!';
+    private $_salt          = 't3st!ng';
 
     /**
      * Init the object, set up the session config handling
@@ -51,9 +51,8 @@ class Session extends Base
      */
     public function write($id,$data)
     {
-        $path = $this->_savePathRoot.'/'.$id;
-        $data = hash('sha256',$this->_salt.'|'.$data);
-
+        $path = $this->_savePathRoot.'/shield_'.$id;
+        $data = mcrypt_encrypt(MCRYPT_DES, $this->_salt, $data, MCRYPT_MODE_ECB);
         file_put_contents($path,$data);
     }
 
@@ -78,8 +77,15 @@ class Session extends Base
      */
     public function read($id)
     {
-        $path = $this->_savePathRoot.'/'.$id;
-        return file_get_contents($path);
+        $path = $this->_savePathRoot.'/shield_'.$id;
+        $data = null;
+
+        if (is_file($path)) {
+            $data = file_get_contents($path);
+            $data = mcrypt_decrypt(MCRYPT_DES, $this->_salt, $data, MCRYPT_MODE_ECB);
+        }
+
+        return $data;
     }
 
     /**
@@ -101,18 +107,26 @@ class Session extends Base
      */
     public function gc($maxlifetime)
     {
-        // garbage collection
+        $path = $this->_savePathRoot.'/shield_*';
+
+        foreach (glob($path) as $file) {
+            if (filemtime($file) + $maxlifetime < time() && file_exists($file)) {
+                unlink($file);
+            }
+        }
+
+        return true;
     }
 
     /**
      * Open the session
      * 
-     * @param string $save_path  Path to save the session file locally
-     * @param string $session_id Session ID
+     * @param string $savePath  Path to save the session file locally
+     * @param string $sessionId Session ID
      * 
-     * @return [type]             [description]
+     * @return null
      */
-    public function open($save_path,$session_id)
+    public function open($savePath,$sessionId)
     {
         // open session
     }
@@ -126,10 +140,11 @@ class Session extends Base
      */
     public function destroy($id)
     {
-        $path = $this->_savePathRoot.'/'.$id;
+        $path = $this->_savePathRoot.'/shield_'.$id;
         if (is_file($path)) {
             unlink($path);
         }
+        return true;
     }
 
     /**

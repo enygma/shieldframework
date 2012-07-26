@@ -56,7 +56,7 @@ class Input extends Base
         $this->_server  = $_SERVER;
         $this->_session = $_SESSION;
 
-        unset($_GET,$_POST,$_REQUEST,$_FILES,$_SERVER,$_SESSION);
+        unset($_GET,$_POST,$_REQUEST,$_FILES,$_SERVER);
 
         parent::__construct($di);
     }
@@ -82,13 +82,41 @@ class Input extends Base
         return ($val !== false && $val !== null) ? $val : null;
     }
 
-    public function getAll($type)
+    /**
+     * Set a value into the input type
+     * 
+     * @param string $type  Variable type
+     * @param string $name  Variable name
+     * @param mixed  $value Valiable value
+     * 
+     * @return object Shield\Input instance
+     */
+    public function set($type,$name,$value)
     {
         $type = '_'.strtolower($type);
 
         if (isset($this->$type)) {
-            return $this->$type;
+            $this->$type[$name] = $value;
+
+            //sessions are special
+            if ($type == '_session') {
+                $_SESSION[$name] = $value;
+            }
         }
+        return $this;
+    }
+
+    /**
+     * Get all if the RAW values of the given type (GET, POST, etc.)
+     * 
+     * @param string $type Global type
+     * 
+     * @return mixed Either the array of values or NULL
+     */
+    public function getAll($type)
+    {
+        $type = '_'.strtolower($type);
+        return (isset($this->$type)) ? $this->$type : null;
     }
 
     /**

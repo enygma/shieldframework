@@ -11,7 +11,12 @@ that was designed with security in mind.
 - Logging on all actions
 - Input filtering functionality for accessing all superglobal information
 - Uses PHP's own filtering for data sanitization
-- Encripted session handling (sha256 hashed w/salt)
+- Encrypted session handling (DES w/salt)
+
+Requires
+---------------
+* PHP 5.3.x
+* mcrypt extension (for sessions)
 
 The Code
 ---------------
@@ -105,6 +110,7 @@ Pull values from the PHP superglobals (filtered)
 * `request($name)`: Pull from the $_REQUEST, `$name` is name of the variable
 * `files($name)`: Pull from the $_FILES, `$name` is the name of the variable
 * `server($name)`: Pull from the $_SERVER, `$name` is the name of the variable
+* `set($type,$name,$value)`: Push a `$value` into the property `$name` of `$type` ('session','get','post',etc)
 
 *NOTE:* Superglobals are *unset* following a creation of an Input object.
 
