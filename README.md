@@ -14,6 +14,7 @@ This project is under a MIT license.
 - Input filtering functionality for accessing all superglobal information
 - Uses PHP's own filtering for data sanitization
 - Encrypted session handling (DES w/salt)
+- Custom cookie handling (including httpOnly)
 
 Requires
 ---------------
@@ -127,8 +128,22 @@ Handle output to the page
 
 *NOTE:* All values are escaped/filtered by default to prevent XSS. This can be overridden if desired.
 
+Configuration
+--------------
+An optional `config.php` file can be placed in the same root as your front controller (probably `index.php`) so
+it can be found by the framework. This configuration file is a PHP array returned with your settings. These values 
+can be accessed through the `$di->get('Config')->get()` method call. Here's an example config:
+
+```php
+<?php
+return array(
+    'log_path' => '/tmp'
+);
+```
+
 Contact
 --------------
 Chris Cornutt <ccornutt@phpdeveloper.org>
+
 @enygma
 
