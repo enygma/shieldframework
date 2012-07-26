@@ -19,7 +19,7 @@ I'm a big fan of the Slim microframework, so anyone that's used that will feel a
 Here's some example code of it in use:
 
 ```php
-<?
+<?php
 include_once '../Shield/Shield.php';
 $app = new Shield\Shield();
 
@@ -28,6 +28,7 @@ $app->get('/',function() use ($app){
 });
 
 $app->run();
+?>
 ```
 
 The above example is super simple - all it does is handle (thanks to the included .htaccess file)
@@ -38,6 +39,7 @@ Let's take a look at something a bit more complicated to introduce you to a few 
 at your disposal:
 
 ```php
+<?php
 include_once '../Shield/Shield.php';
 $app = new Shield\Shield();
 
@@ -52,6 +54,7 @@ $app->get('/',function() use ($app){
 });
 
 $app->run();
+?>
 ```
 
 First off, there's one key difference between this example and the first one. In this example we 
