@@ -2,7 +2,7 @@
 
 namespace Shield;
 
-class Filter
+class Filter extends Base
 {
     /**
      * Container for field filters
