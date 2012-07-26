@@ -78,7 +78,8 @@ class Session extends Base
      */
     public function read($id)
     {
-        // nothing to see...
+        $path = $this->_savePathRoot.'/'.$id;
+        return file_get_contents($path);
     }
 
     /**
