@@ -22,6 +22,23 @@ class Shield
      */
     private $_errorLevel = '-1';
 
+    private $_errorConstants = array(
+        1       => 'Error',
+        2       => 'Warning',
+        4       => 'Parse error',
+        8       => 'Notice',
+        16      => 'Core Error',
+        32      => 'Core Warning',
+        256     => 'User Error',
+        512     => 'User Warning',
+        1024    => 'User Notice',
+        2048    => 'Strict',
+        4096    => 'Recoverable Error',
+        8192    => 'Deprecated',
+        16384   => 'User Deprecated',
+        32767   => 'All'
+    );
+
     /**
      * Dependency Injection container
      * @var object
@@ -51,6 +68,7 @@ class Shield
         ini_set('display_errors', 1);
 
         spl_autoload_register(array($this,'_load'));
+        set_error_handler(array($this,'_errorHandler'));
 
         // make our DI container
         $this->di = new Di();
@@ -61,16 +79,14 @@ class Shield
 
         // set up the custom encrypted session handler
         ini_set('session.save_handler', 'files');
-        $session = new Session($this->di);
+        $this->di->register(new Session($this->di));
         session_start();
-
-        $this->di->register($session);
 
         // grab our input & filter
         $this->di->register(new Filter($this->di));
         $input  = new Input($this->di);
 
-        session_set_cookie_params(3600,'/',$input->server('HTTP_HOST'),1);
+        session_set_cookie_params(3600, '/', $input->server('HTTP_HOST'), 1);
 
         $env = new Env($this->di);
         $env->check();
@@ -183,5 +199,15 @@ class Shield
     protected function _throwError($msg,$level=E_USER_WARNING)
     {
         trigger_error($msg, $level);
+    }
+
+    protected function _errorHandler($errno,$errstr,$errfile,$errline)
+    {
+        $errString = (array_key_exists($errno, $this->_errorConstants))
+            ? $this->_errorConstants[$errno] : $errno;
+
+        echo '<b>'.$errString.':</b> '.$errstr.'<br/>';
+
+        error_log($errString.' ['.$errno.']: '.$errstr.' in '.$errfile.' on line '.$errline);
     }
 }
