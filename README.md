@@ -6,6 +6,8 @@ frameworks out there left it up to the developer to correctly handle input/outpu
 Unfortunately, this has been a sticking point in PHP apps, so I decided to work on a microframework
 that was designed with security in mind.
 
+This project is under a MIT license.
+
 ### Features:
 - Output filtering on all values (preventing XSS)
 - Logging on all actions
@@ -125,4 +127,8 @@ Handle output to the page
 
 *NOTE:* All values are escaped/filtered by default to prevent XSS. This can be overridden if desired.
 
-@author Chris Cornutt <ccornutt@phpdeveloper.org>
+Contact
+--------------
+Chris Cornutt <ccornutt@phpdeveloper.org>
+@enygma
+
