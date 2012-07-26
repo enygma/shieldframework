@@ -15,6 +15,7 @@ This project is under a MIT license.
 - Uses PHP's own filtering for data sanitization
 - Encrypted session handling (DES w/salt)
 - Custom cookie handling (including httpOnly)
+- Customized error handling to avoid exposing filesystem information
 
 Requires
 ---------------
@@ -140,6 +141,9 @@ return array(
     'log_path' => '/tmp'
 );
 ```
+
+### Available Config options
+* `log_path`: Set the default logging path
 
 Contact
 --------------
