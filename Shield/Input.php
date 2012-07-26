@@ -35,6 +35,12 @@ class Input extends Base
     private $_server   = array();
 
     /**
+     * Internal variable for $_SESSION values
+     * @var array
+     */
+    private $_session  = array();
+
+    /**
      * Intiitalize the object and extract the superglobals
      * 
      * @param object $di DI container
@@ -48,8 +54,9 @@ class Input extends Base
         $this->_request = $_REQUEST;
         $this->_files   = $_FILES;
         $this->_server  = $_SERVER;
+        $this->_session = $_SESSION;
 
-        unset($_GET,$_POST,$_REQUEST,$_FILES,$_SERVER);
+        unset($_GET,$_POST,$_REQUEST,$_FILES,$_SERVER,$_SESSION);
 
         parent::__construct($di);
     }
@@ -175,6 +182,29 @@ class Input extends Base
                     'You are using the raw SERVER "'.$name.'" value! Use with caution!'
                 );
                 return $this->_server[$name];
+            }
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Pull a value from the $_SESSION values
+     * 
+     * @param string $name Name of the variable
+     * 
+     * @return mixed Found value or NULL
+     */
+    public function session($name,$escape=true)
+    {
+        if (isset($this->_session[$name])) {
+            if ($escape === true) {
+                return $this->_filterInput($name, $this->_session[$name]);
+            } else {
+                $this->_throwError(
+                    'You are using the raw SERVER "'.$name.'" value! Use with caution!'
+                );
+                return $this->_session[$name];
             }
         } else {
             return null;

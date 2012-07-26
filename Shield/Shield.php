@@ -52,6 +52,11 @@ class Shield
 
         spl_autoload_register(array($this,'_load'));
 
+        // set up the custom encrypted session handler
+        ini_set('session.save_handler', 'files');
+        $session = new Session();
+        session_start();
+
         // make our DI container
         $this->di = new Di();
 
@@ -66,17 +71,12 @@ class Shield
         $this->view = new View($this->di);
         $this->_log = new Log($this->di);
 
-        // set up the custom encrypted session handler
-        ini_set('session.save_handler', 'files');
-        $handler = new Session();
-        session_start();
-
         $config = new Config($this->di);
         $config->load();
 
         $this->di->register(
             array(
-                $input,$filter,
+                $input,$filter,$session,
                 $config,$this->view,$this->_log
             )
         );

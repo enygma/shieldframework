@@ -2,7 +2,7 @@
 
 namespace Shield;
 
-class Session
+class Session extends Base
 {
     /**
      * Path to save the sessions to
@@ -127,6 +127,17 @@ class Session
         if (is_file($path)) {
             unlink($path);
         }
+    }
+
+    /**
+     * Refresh the session with a new ID
+     * 
+     * @return null
+     */
+    public function refresh()
+    {
+        //$this->di->get('Input')->
+        $id = session_regenerate_id(true);
     }
 
 }
