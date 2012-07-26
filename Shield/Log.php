@@ -20,9 +20,13 @@ class Log extends Base
     public function __construct($di)
     {
         // nothing to see, move along
-        $this->_logPath = __DIR__.'/../app/logs';
+        $this->_logPath = __DIR__.'/../app/../logs';
         if (!is_dir($this->_logPath)) {
-            mkdir($this->_logPath);
+            if (is_writeable($this->_logPath)) {
+                mkdir($this->_logPath);
+            } else {
+                $this->_throwError('Cannot create logs/ directory');
+            }
         }
     }
 
@@ -36,11 +40,13 @@ class Log extends Base
     public function log($msg,$level='info')
     {
         $logFile = $this->_logPath.'/log-'.date('Ymd').'.log';
-        $fp = fopen($logFile,'a+');
-        if($fp) {
-            $msg = '['.date('m.d.Y H:i:s').'] ['.strtoupper($level).'] '.$msg;
-            fwrite($fp,$msg."\n");
-            fclose($fp);
+        if (is_writeable($logFile)) {
+            $fp = fopen($logFile,'a+');
+            if($fp) {
+                $msg = '['.date('m.d.Y H:i:s').'] ['.strtoupper($level).'] '.$msg;
+                fwrite($fp,$msg."\n");
+                fclose($fp);
+            }
         }
     }
 
