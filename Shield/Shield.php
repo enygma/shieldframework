@@ -118,10 +118,10 @@ class Shield
 
         if (isset($args[1])) {
             $this->_routes[$func][$path] = $args[1];
-            $this->di->get('Log')->log('SETTING PATH ['.strtoupper($func).']: '.$path);    
+            $this->di->Log->log('SETTING PATH ['.strtoupper($func).']: '.$path);    
         } else {
             $this->_throwError('No path to set for : '.strtoupper($func));
-            $this->di->get('Log')->log('NO PATH TO SET ['.strtoupper($func).']: '.$path);    
+            $this->di->Log->log('NO PATH TO SET ['.strtoupper($func).']: '.$path);    
         }
     }
 
