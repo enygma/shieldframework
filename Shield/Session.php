@@ -162,5 +162,3 @@ class Session extends Base
     }
 
 }
-
-?>

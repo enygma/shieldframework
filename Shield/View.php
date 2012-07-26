@@ -53,5 +53,3 @@ class View extends Base
         return $content;
     }
 }
-
-?>

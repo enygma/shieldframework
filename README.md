@@ -35,7 +35,7 @@ $app->get('/',function(){
 });
 
 $app->run();
-?>
+
 ```
 
 The above example is super simple - all it does is handle (thanks to the included .htaccess file)
@@ -61,7 +61,7 @@ $app->get('/',function() use ($app){
 });
 
 $app->run();
-?>
+
 ```
 
 First off, there's one key difference between this example and the first one. In this example we 

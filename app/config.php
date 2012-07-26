@@ -3,5 +3,3 @@
 return array(
     // nothing to see
 );
-
-?>

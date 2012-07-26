@@ -84,5 +84,3 @@ class Log extends Base
     }
 
 }
-
-?>

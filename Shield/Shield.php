@@ -184,5 +184,3 @@ class Shield
         trigger_error($msg, $level);
     }
 }
-
-?>

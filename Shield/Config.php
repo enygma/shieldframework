@@ -105,5 +105,3 @@ class Config extends Base
         return $this;
     }
 }
-
-?>

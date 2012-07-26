@@ -33,5 +33,3 @@ class Base
         trigger_error($msg, $level);
     }
 }
-
-?>

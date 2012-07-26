@@ -248,5 +248,3 @@ class Input extends Base
         }
     }
 }
-
-?>
