@@ -1,4 +1,4 @@
-Shield : Microframework, Major Security
+Shield : A Security-Minded Microframework
 ===============
 
 In my efforts to learn more about security best practices in PHP, I noticed that most of the PHP 
