@@ -10,6 +10,43 @@ class Log extends Base
      */
     private $_logPath = null;
 
+    public function setLogPath($path)
+    {
+        $path = realpath($path);
+        if (!is_writeable($path)) {
+            $this->_throwError('Cannot set log path - not writeable!');
+        } else {
+            $this->_logPath = $path;
+        }
+    }
+
+    /**
+     * Get the current logging path
+     * 
+     * @return string
+     */
+    public function getLogPath()
+    {
+        return $this->_logPath;
+    }
+
+    /**
+     * Make the default log path
+     * 
+     * @return null
+     */
+    public function makeLogPath()
+    {
+        // check to see if we can write to it
+        if (!is_dir($this->_logPath)) {
+            if (is_writeable($this->_logPath)) {
+                mkdir($this->_logPath);
+            } else {
+                $this->_throwError('Cannot create logs/ directory');
+            }
+        }
+    }
+
     /**
      * Init the object and set up the config file path
      * 
@@ -19,15 +56,8 @@ class Log extends Base
      */
     public function __construct($di)
     {
-        // nothing to see, move along
-        $this->_logPath = __DIR__.'/../app/../logs';
-        if (!is_dir($this->_logPath)) {
-            if (is_writeable($this->_logPath)) {
-                mkdir($this->_logPath);
-            } else {
-                $this->_throwError('Cannot create logs/ directory');
-            }
-        }
+        // set a default logging path
+        $this->setLogPath(realpath(__DIR__.'/../app/../logs'));
     }
 
     /**
@@ -39,14 +69,17 @@ class Log extends Base
      */
     public function log($msg,$level='info')
     {
-        $logFile = $this->_logPath.'/log-'.date('Ymd').'.log';
-        if (is_writeable($logFile)) {
+        $logFile = realpath($this->getLogPath().'/log-'.date('Ymd').'.log');
+
+        if (is_writeable($this->getLogPath())) {
             $fp = fopen($logFile,'a+');
             if($fp) {
                 $msg = '['.date('m.d.Y H:i:s').'] ['.strtoupper($level).'] '.$msg;
                 fwrite($fp,$msg."\n");
                 fclose($fp);
             }
+        } else {
+            $this->_throwError('Cannot write to logs/ directory');
         }
     }
 
