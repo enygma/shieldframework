@@ -1,4 +1,4 @@
 language: php
 php:
   - 5.3
-script: phpunit Shield/tests
+script: phpunit --configuration Shield/tests/phpunit.xml Shield/tests/
