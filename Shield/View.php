@@ -29,6 +29,18 @@ class View extends Base
     }
 
     /**
+     * Get a value out of the currently set View values
+     * 
+     * @param string $index Name of value to get
+     * 
+     * @return mixed Found value or NULL
+     */
+    public function get($index)
+    {
+        return (isset($this->_values[$index])) ? $this->_values[$index] : null;
+    }
+
+    /**
      * Get the complete list of View values
      * 
      * @return array List of values (array)
