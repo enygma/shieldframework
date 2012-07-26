@@ -1,0 +1,53 @@
+<?php
+
+namespace Shield;
+
+class Env extends Base
+{
+    /**
+     * Execute the checks for various environment issues
+     * 
+     * @return null
+     */
+    public function check()
+    {
+        $this->_checkRegisterGlobals();
+        $this->_checkMagicQuotes();
+    }
+
+    /**
+     * Check the register_globals setting
+     * 
+     * @return boolean Enabled/not enabled
+     */
+    private function _checkRegisterGlobals()
+    {
+        $reg = ini_get('register_globals');
+        if ($reg !== '') {
+            $this->_throwError('SECURITY WARNING: register_globals is enabled! '
+                .'Please consider disabiling.');
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Check the magic_quotes setting
+     * 
+     * @return boolean Enabled/not enabled
+     */
+    private function _checkMagicQuotes()
+    {
+        $quotes = ini_get('magic_quotes');
+        error_log(var_export($quotes,true));
+
+        if ($quotes !== '' && $quotes !== false) {
+            $this->_throwError('SECURITY WARNING: magic_quotes is enabled! '
+                .'Please consiter disabiling');
+        } else {
+            return true;
+        }
+    }
+}
+
+?>
