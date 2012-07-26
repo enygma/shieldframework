@@ -1,0 +1,23 @@
+{
+    "name":"shield/shield",
+    "type":"library",
+    "description":"Shield : Microframework, Major Security",
+    "keywords":["microframework", "rest", "router"],
+    "homepage":"https://github.com/enygma/shieldframework.git",
+    "license":"MIT",
+    "authors":[
+        {
+            "name":"Chris Cornutt",
+            "email":"ccornutt@phpdeveloper.org",
+            "homepage":"http://www.phpdeveloper.org/"
+        }
+    ],
+    "require":{
+        "php":">=5.2.0"
+    },
+    "autoload":{
+        "psr-0":{
+            "Shield":"Shield/"
+        }
+    }
+}
