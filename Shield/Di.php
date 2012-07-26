@@ -54,6 +54,18 @@ class Di
         return (array_key_exists($name, $this->_objects))
             ? $this->_objects[$name] : null;
     }
+
+    /**
+     * Use the magic method to see if an object's in our set
+     * 
+     * @param string $name Object name
+     * 
+     * @return [type]       [description]
+     */
+    public function __get($name)
+    {
+        return $this->get($name);
+    }
 }
 
 ?>
