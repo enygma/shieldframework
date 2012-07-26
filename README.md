@@ -151,3 +151,5 @@ Chris Cornutt <ccornutt@phpdeveloper.org>
 
 @enygma
 
+[![Build Status](https://secure.travis-ci.org/enygma/shieldframework.png?branch=master)](http://travis-ci.org/enygma/shieldframework)
+
