@@ -45,11 +45,11 @@ $app = new Shield\Shield();
 
 $app->get('/',function() use ($app){
 
-    $app->view->set('test','<a href="">foodles</a>');
     $app->filter->add('test','email');
 
     echo 'from the URL: '.$app->input->get('test').'<br/>';
 
+    $app->view->set('test','<a href="">foodles</a>');
     return $app->view->render('index1 [test]');
 });
 
