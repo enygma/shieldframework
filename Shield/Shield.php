@@ -63,11 +63,14 @@ class Shield
         ini_set('session.save_handler', 'files');
         $session = new Session($this->di);
         session_start();
+
         $this->di->register($session);
 
         // grab our input & filter
+        $this->di->register(new Filter($this->di));
         $input  = new Input($this->di);
-        $filter = new Filter($this->di);
+
+        session_set_cookie_params(3600,'/',$input->server('HTTP_HOST'),1);
 
         $env = new Env($this->di);
         $env->check();
@@ -77,7 +80,7 @@ class Shield
         $this->_log = new Log($this->di);
 
         $this->di->register(
-            array($input,$filter,$this->view,$this->_log)
+            array($input,$this->view,$this->_log)
         );
     }
 
