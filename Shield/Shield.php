@@ -55,6 +55,10 @@ class Shield
         // make our DI container
         $this->di = new Di();
 
+        $config = new Config($this->di);
+        $config->load();
+        $this->di->register($config);
+
         // set up the custom encrypted session handler
         ini_set('session.save_handler', 'files');
         $session = new Session($this->di);
@@ -72,14 +76,8 @@ class Shield
         $this->view = new View($this->di);
         $this->_log = new Log($this->di);
 
-        $config = new Config($this->di);
-        $config->load();
-
         $this->di->register(
-            array(
-                $input,$filter,
-                $config,$this->view,$this->_log
-            )
+            array($input,$filter,$this->view,$this->_log)
         );
     }
 

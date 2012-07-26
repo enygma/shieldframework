@@ -1,5 +1,8 @@
 <?php
 
 return array(
-    // nothing to see
+    /**
+     * You can use this setting to specify a log file directory
+     */
+    //'log_path' => '/tmp'
 );

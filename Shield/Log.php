@@ -56,8 +56,14 @@ class Log extends Base
      */
     public function __construct($di)
     {
-        // set a default logging path
-        $this->setLogPath(realpath(__DIR__.'/../app/../logs'));
+        // check config for a path or set a default logging path
+        $logPath = $di->get('Config')->get('log_path');
+
+        if ($logPath !== null && is_dir(realpath($logPath)) && is_writable($logPath)) {
+            $this->setLogPath(realpath($logPath));
+        } else {
+            $this->setLogPath(realpath(__DIR__.'/../app/../logs'));
+        }
     }
 
     /**
@@ -69,7 +75,7 @@ class Log extends Base
      */
     public function log($msg,$level='info')
     {
-        $logFile = realpath($this->getLogPath().'/log-'.date('Ymd').'.log');
+        $logFile = $this->getLogPath().'/log-'.date('Ymd').'.log';
 
         if (is_writeable($this->getLogPath())) {
             $fp = fopen($logFile,'a+');
