@@ -23,7 +23,7 @@ Here's some example code of it in use:
 include_once '../Shield/Shield.php';
 $app = new Shield\Shield();
 
-$app->get('/',function() use ($app){
+$app->get('/',function(){
     echo 'website root! woo!';
 });
 
