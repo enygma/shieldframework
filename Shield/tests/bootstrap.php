@@ -11,4 +11,3 @@ function load($className)
     }
 }
 spl_autoload_register('load');
-?>

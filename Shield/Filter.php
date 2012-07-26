@@ -126,5 +126,3 @@ class Filter extends Base
         return ($val === $value) ? $val : null;
     }
 }
-
-?>

@@ -67,5 +67,3 @@ class Di
         return $this->get($name);
     }
 }
-
-?>
