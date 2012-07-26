@@ -82,6 +82,15 @@ class Input extends Base
         return ($val !== false && $val !== null) ? $val : null;
     }
 
+    public function getAll($type)
+    {
+        $type = '_'.strtolower($type);
+
+        if (isset($this->$type)) {
+            return $this->$type;
+        }
+    }
+
     /**
      * Pull an information from the $_GET values
      * 

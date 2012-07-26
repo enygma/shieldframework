@@ -51,7 +51,6 @@ class Env extends Base
     private function _checkMagicQuotes()
     {
         $quotes = ini_get('magic_quotes');
-        error_log(var_export($quotes,true));
 
         if ($quotes !== '' && $quotes !== false) {
             $this->_throwError('SECURITY WARNING: magic_quotes is enabled! '

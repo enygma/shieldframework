@@ -27,7 +27,7 @@ class Session extends Base
      * 
      * @return null
      */
-    public function __construct()
+    public function __construct($di)
     {
         session_set_save_handler(
             array($this, "open"),
@@ -37,6 +37,8 @@ class Session extends Base
             array($this, "destroy"),
             array($this, "gc")
         );
+
+        parent::__construct($di);
     }
 
     /**
@@ -136,8 +138,11 @@ class Session extends Base
      */
     public function refresh()
     {
-        //$this->di->get('Input')->
+        $sess = $this->_di->get('Input')->getAll('session');
         $id = session_regenerate_id(true);
+        session_destroy();
+        session_start();
+        $_SESSION = $sess;
     }
 
 }

@@ -52,20 +52,20 @@ class Shield
 
         spl_autoload_register(array($this,'_load'));
 
-        // set up the custom encrypted session handler
-        ini_set('session.save_handler', 'files');
-        $session = new Session();
-        session_start();
-
         // make our DI container
         $this->di = new Di();
 
-        $env = new Env($this->di);
-        $env->check();
+        // set up the custom encrypted session handler
+        ini_set('session.save_handler', 'files');
+        $session = new Session($this->di);
+        session_start();
 
         // grab our input & filter
         $input  = new Input($this->di);
         $filter = new Filter($this->di);
+
+        $env = new Env($this->di);
+        $env->check();
 
         // set up the view and logger objects
         $this->view = new View($this->di);
