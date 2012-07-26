@@ -11,8 +11,20 @@ class Env extends Base
      */
     public function check()
     {
+        $this->_setFrameHeader();
+
         $this->_checkRegisterGlobals();
         $this->_checkMagicQuotes();
+    }
+
+    /**
+     * Set a X-Frame-Options header
+     * 
+     * @return null
+     */
+    private function _setFrameHeader()
+    {
+        header('X-Frame-Options: deny');
     }
 
     /**
