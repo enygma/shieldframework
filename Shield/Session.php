@@ -20,7 +20,7 @@ class Session extends Base
      * Salt for hashing the session data
      * @var string
      */
-    private $_salt          = 't3st!ng';
+    private $_key          = 't3st!ng';
 
     /**
      * Init the object, set up the session config handling
@@ -38,6 +38,11 @@ class Session extends Base
             array($this, "gc")
         );
 
+        $sessionKey = $di->get('Config')->get('session_key');
+        if ($sessionKey !== null) {
+            $this->_key = $sessionKey;
+        }
+
         parent::__construct($di);
     }
 
@@ -52,21 +57,21 @@ class Session extends Base
     public function write($id,$data)
     {
         $path = $this->_savePathRoot.'/shield_'.$id;
-        $data = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $this->_salt, $data, MCRYPT_MODE_ECB);
+        $data = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $this->_key, $data, MCRYPT_MODE_CBC);
 
         file_put_contents($path,$data);
     }
 
     /**
-     * Set the salt for the sesion encryption to use (default is set)
+     * Set the key for the sesion encryption to use (default is set)
      * 
-     * @param string $salt Salt string
+     * @param string $key Key string
      * 
      * @return null
      */
-    public function setSalt($salt)
+    public function setKey($key)
     {
-        $this->_salt = $salt;
+        $this->_key = $salt;
     }
 
     /**
@@ -83,7 +88,7 @@ class Session extends Base
 
         if (is_file($path)) {
             $data = file_get_contents($path);
-            $data = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $this->_salt, $data, MCRYPT_MODE_ECB);
+            $data = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $this->_key, $data, MCRYPT_MODE_CBC);
         }
 
         return $data;
