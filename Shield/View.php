@@ -35,15 +35,26 @@ class View extends Base
         parent::__construct($di);
     }
 
+    /**
+     * Set the directory to look for views in
+     * 
+     * @param string $dir Direcotry path
+     */
     public function setViewDir($dir=null)
     {
         // see if the path is valid
-        $viewPath = __DIR__.'/../app/views';
+        $viewPath = ($dir !== null) ? $dir : __DIR__.'/../app/views';
 
         if (realpath($viewPath) !== false) {
             $this->_viewDir = realpath($viewPath);
         }
     }
+
+    /**
+     * Get the current path for view files
+     * 
+     * @return string View path
+     */
     public function getViewDir()
     {
         return $this->_viewDir;
