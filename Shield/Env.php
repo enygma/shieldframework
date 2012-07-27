@@ -54,7 +54,7 @@ class Env extends Base
 
         if ($quotes !== '' && $quotes !== false) {
             $this->_throwError('SECURITY WARNING: magic_quotes is enabled! '
-                .'Please consiter disabiling');
+                .'Please consider disabiling');
         } else {
             return true;
         }
