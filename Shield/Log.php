@@ -91,7 +91,6 @@ class Log extends Base
     public function log($msg,$level='info')
     {
         $logFile = $this->getLogPath().'/log-'.date('Ymd').'.log';
-        error_log('logfile: '.$logFile);
 
         if (is_writeable($this->getLogPath())) {
             $fp = fopen($logFile,'a+');
