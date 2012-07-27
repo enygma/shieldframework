@@ -8,15 +8,17 @@ class Log extends Base
      * Path to the log file
      * @var string
      */
-    private $_logPath = null;
+    private $logPath = null;
 
     public function setLogPath($path)
     {
         $path = realpath($path);
-        if (!is_writeable($path)) {
-            $this->_throwError('Cannot set log path - not writeable!');
+        if (!file_exists($path)) {
+            $this->throwError('Cannot set log path - path does not exist!');
+        } elseif (!is_writeable($path)) {
+            $this->throwError('Cannot set log path - not writeable!');
         } else {
-            $this->_logPath = $path;
+            $this->logPath = $path;
         }
     }
 
@@ -27,7 +29,7 @@ class Log extends Base
      */
     public function getLogPath()
     {
-        return $this->_logPath;
+        return $this->logPath;
     }
 
     /**
@@ -37,14 +39,14 @@ class Log extends Base
      */
     public function makeLogPath($logPath=null)
     {
-        $logPath = ($logPath !== null) ? $logPath : $this->_logPath;
+        $logPath = ($logPath !== null) ? $logPath : $this->logPath;
 
         // check to see if we can write to it
         if (is_writable($logPath)) {
             mkdir($logPath);
             return true;
         } else {
-            $this->_throwError('Cannot create logs/ directory');
+            $this->throwError('Cannot create logs/ directory');
             return false;
         }
     }
@@ -56,7 +58,7 @@ class Log extends Base
      * 
      * @return null
      */
-    public function __construct($di)
+    public function __construct(Di $di)
     {
         // check config for a path or set a default logging path
         $logPath = $di->get('Config')->get('log_path');
@@ -86,21 +88,25 @@ class Log extends Base
      * 
      * @param string $msg Message to write
      * 
-     * @return null;
+     * @return null
      */
-    public function log($msg,$level='info')
+    public function log($msg, $level='info')
     {
         $logFile = $this->getLogPath().'/log-'.date('Ymd').'.log';
 
         if (is_writeable($this->getLogPath())) {
-            $fp = fopen($logFile,'a+');
-            if($fp) {
+            if (!$fp = fopen($logFile, 'a+')) {
+                $this->throwError('Cannot open the log file.');
+            }
+            if ($fp) {
                 $msg = '['.date('m.d.Y H:i:s').'] ['.strtoupper($level).'] '.$msg;
-                fwrite($fp,$msg."\n");
+                if (fwrite($fp, $msg."\n") === false) {
+                    $this->throwError('Cannot write to the log file.');
+                }
                 fclose($fp);
             }
         } else {
-            $this->_throwError('Cannot write to logs/ directory');
+            $this->throwError('Cannot write to the log directory.');
         }
     }
 
