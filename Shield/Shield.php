@@ -86,7 +86,7 @@ class Shield
         $this->di->register(new Filter($this->di));
         $input  = new Input($this->di);
 
-        session_set_cookie_params(3600, '/', $input->server('HTTP_HOST'), 1);
+        session_set_cookie_params(3600, '/', $input->server('HTTP_HOST'), 1, true);
 
         $env = new Env($this->di);
         $env->check();
