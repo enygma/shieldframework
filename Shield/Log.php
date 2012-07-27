@@ -35,15 +35,17 @@ class Log extends Base
      * 
      * @return null
      */
-    public function makeLogPath()
+    public function makeLogPath($logPath=null)
     {
+        $logPath = ($logPath !== null) ? $logPath : $this->_logPath;
+
         // check to see if we can write to it
-        if (!is_dir($this->_logPath)) {
-            if (is_writeable($this->_logPath)) {
-                mkdir($this->_logPath);
-            } else {
-                $this->_throwError('Cannot create logs/ directory');
-            }
+        if (is_writable($logPath)) {
+            mkdir($logPath);
+            return true;
+        } else {
+            $this->_throwError('Cannot create logs/ directory');
+            return false;
         }
     }
 
@@ -62,7 +64,20 @@ class Log extends Base
         if ($logPath !== null && is_dir(realpath($logPath)) && is_writable($logPath)) {
             $this->setLogPath(realpath($logPath));
         } else {
-            $this->setLogPath(realpath(__DIR__.'/../app/../logs'));
+            $logPath  = __DIR__.'/../app/../logs';
+            $realpath = realpath($logPath);
+
+            if ($realpath === false) {
+                // directory may not exist, try to create
+                if ($this->makeLogPath($logPath) === true) {
+                    $this->setLogPath($logPath);
+                } else {
+                    // all else fails, write to /tmp
+                    $this->setLogPath('/tmp');
+                }
+            } else {
+                $this->setLogPath($realpath);
+            }
         }
     }
 
@@ -76,6 +91,7 @@ class Log extends Base
     public function log($msg,$level='info')
     {
         $logFile = $this->getLogPath().'/log-'.date('Ymd').'.log';
+        error_log('logfile: '.$logFile);
 
         if (is_writeable($this->getLogPath())) {
             $fp = fopen($logFile,'a+');

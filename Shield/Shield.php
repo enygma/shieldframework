@@ -201,7 +201,7 @@ class Shield
         trigger_error($msg, $level);
     }
 
-    protected function _errorHandler($errno,$errstr,$errfile,$errline)
+    public function _errorHandler($errno,$errstr,$errfile,$errline)
     {
         $errString = (array_key_exists($errno, $this->_errorConstants))
             ? $this->_errorConstants[$errno] : $errno;
