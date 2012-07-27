@@ -63,7 +63,7 @@ class Session extends Base
     }
 
     /**
-     * Set the key for the sesion encryption to use (default is set)
+     * Set the key for the session encryption to use (default is set)
      * 
      * @param string $key Key string
      * 
@@ -71,7 +71,7 @@ class Session extends Base
      */
     public function setKey($key)
     {
-        $this->_key = $salt;
+        $this->_key = $key;
     }
 
     /**
