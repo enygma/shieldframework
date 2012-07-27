@@ -8,7 +8,7 @@ class View extends Base
      * Container for the values to replace in the array
      * @var array
      */
-    private $_values = array();
+    private $values = array();
 
     /**
      * View directory path
@@ -63,19 +63,20 @@ class View extends Base
     /**
      * Set a new value into the view instance
      * 
-     * @param string $index String to replace
-     * @param string $value Value for the view
+     * @param string $index  String to replace
+     * @param string $value  Value for the view
+     * @param bool   $escape Whether to escape the value
      * 
      * @return null
      */
-    public function set($index,$value,$escape=true)
+    public function set($index, $value, $escape=true)
     {
-        if ($escape == true) {
+        if ($escape === true) {
             // escape all values
-            $value = htmlspecialchars($value);
+            $value = htmlspecialchars($value, ENT_QUOTES);
         }
 
-        $this->_values[$index] = $value;
+        $this->values[$index] = $value;
     }
 
     /**
@@ -87,7 +88,7 @@ class View extends Base
      */
     public function get($index)
     {
-        return (isset($this->_values[$index])) ? $this->_values[$index] : null;
+        return (isset($this->values[$index])) ? $this->values[$index] : null;
     }
 
     /**
@@ -95,9 +96,9 @@ class View extends Base
      * 
      * @return array List of values (array)
      */
-    private function _getValues()
+    private function getValues()
     {
-        return $this->_values;
+        return $this->values;
     }
 
     /**
@@ -109,8 +110,8 @@ class View extends Base
      */
     public function render($content)
     {
-        foreach ($this->_getValues() as $index => $value) {
-            $content = str_replace('['.$index.']',$value,$content);
+        foreach ($this->getValues() as $index => $value) {
+            $content = str_replace('['.$index.']', $value, $content);
         }
         return $content;
     }

@@ -8,22 +8,22 @@ class Filter extends Base
      * Container for field filters
      * @var array
      */
-    private $_filters = array();
+    private $filters = array();
 
     /**
      * Add a new filter
      * 
-     * @param strng  $name Name of the field
+     * @param string $name Name of the field
      * @param string $type Type of filter
      * 
      * @return null
      */
-    public function add($name,$type)
+    public function add($name, $type)
     {
-        if (isset($this->_filters[$name])) {
-            $this->_filters[$name][] = $type;
+        if (isset($this->filters[$name])) {
+            $this->filters[$name][] = $type;
         } else {
-            $this->_filters[$name] = array($type);
+            $this->filters[$name] = array($type);
         }
     }
 
@@ -37,15 +37,15 @@ class Filter extends Base
     public function get($name)
     {
         $func = array();
-        if (isset($this->_filters[$name])) {
-            foreach ($this->_filters[$name] as $filter) {
-                $func[] = '_filter'.ucwords(strtolower($filter));
+        if (isset($this->filters[$name])) {
+            foreach ($this->filters[$name] as $filter) {
+                $func[] = 'filter'.ucwords(strtolower($filter));
             }
         }
         return $func;
     }
 
-    public function filter($name,$value)
+    public function filter($name, $value)
     {
         $filters = $this->get($name);
 
@@ -53,7 +53,7 @@ class Filter extends Base
             $filters = array('striptags');
         }
         foreach ($filters as $filter) {
-            $func = '_filter'.ucwords(strtolower($filter));
+            $func = 'filter'.ucwords(strtolower($filter));
             if (method_exists($this, $func)) {
                 $value = $this->$func($value);
             }
@@ -69,7 +69,7 @@ class Filter extends Base
      * 
      * @return mixed Either te value if it matches or NULL
      */
-    private function _filterEmail($value)
+    private function filterEmail($value)
     {
         $val = filter_var($value, FILTER_VALIDATE_EMAIL);
         return ($val === $value) ? $val : null;
@@ -82,7 +82,7 @@ class Filter extends Base
      * 
      * @return string Filtered string
      */
-    private function _filterStriptags($value)
+    private function filterStriptags($value)
     {
         return strip_tags($value);
     }
@@ -94,7 +94,7 @@ class Filter extends Base
      * 
      * @return mixed Either the value or NULL
      */
-    private function _filterInteger($value)
+    private function filterInteger($value)
     {
         $val = filter_var($value, FILTER_VALIDATE_INT);
         return ($val == $value) ? $val : null;
@@ -107,7 +107,7 @@ class Filter extends Base
      * 
      * @return mixed Either the value or NULL
      */
-    private function _filterUrl($value)
+    private function filterUrl($value)
     {
         $val = filter_var($value, FILTER_VALIDATE_URL);
         return ($val == $value) ? $val : null;
@@ -120,7 +120,7 @@ class Filter extends Base
      * 
      * @return mixed Either the value or NULL
      */
-    private function _filterLowercase($value)
+    private function filterLowercase($value)
     {
         $val = strtolower($value);
         return ($val === $value) ? $val : null;

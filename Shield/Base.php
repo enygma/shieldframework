@@ -6,18 +6,19 @@ class Base
 {
     /**
      * DI Container (shared)
+     * 
      * @var object
      */
-    protected $_di = null;
+    protected $di = null;
 
     /**
      * Init the Base object, inject the DI container
      * 
      * @param object $di DI Container
      */
-    public function __construct($di)
+    public function __construct(Di $di)
     {
-        $this->_di = $di;
+        $this->di = $di;
     }
 
     /**
@@ -28,7 +29,7 @@ class Base
      * 
      * @return null
      */
-    protected function _throwError($msg,$level=E_USER_WARNING)
+    protected function throwError($msg, $level=E_USER_WARNING)
     {
         trigger_error($msg, $level);
     }

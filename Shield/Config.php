@@ -8,13 +8,13 @@ class Config extends Base
      * Configuration options container
      * @var array
      */
-    private $_config = array();
+    private $config = array();
 
     /**
      * Configuration file name (default)
      * @var string
      */
-    private $_configFile = 'config.php';
+    private $configFile = 'config.php';
 
     /**
      * Load the configuration into the container (from a file)
@@ -27,7 +27,7 @@ class Config extends Base
     public function load($path=null)
     {
         if ($path == null) {
-            $path = './'.$this->_configFile;
+            $path = './'.$this->configFile;
         }
         $path = realpath($path);
         if (file_exists($path) && !is_readable($path)) {
@@ -52,7 +52,7 @@ class Config extends Base
      */
     public function setConfig($config)
     {
-        $this->_config = $config;
+        $this->config = $config;
         return $this;
     }
 
@@ -65,7 +65,7 @@ class Config extends Base
      */
     public function setConfigFile($fileName)
     {
-        $this->_configFile = $fileName;
+        $this->configFile = $fileName;
         return $this;
     }
 
@@ -86,7 +86,7 @@ class Config extends Base
      */
     public function getConfig()
     {
-        return $this->_config;
+        return $this->config;
     }
 
     /**
@@ -98,7 +98,7 @@ class Config extends Base
      */
     public function get($name)
     {
-        return (isset($this->_config[$name])) ? $this->_config[$name] : null;
+        return (isset($this->config[$name])) ? $this->config[$name] : null;
     }
 
     /**
@@ -111,7 +111,7 @@ class Config extends Base
      */
     public function set($name,$value)
     {
-        $this->_config[$name] = $value;
+        $this->config[$name] = $value;
         return $this;
     }
 }

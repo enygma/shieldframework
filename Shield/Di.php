@@ -8,7 +8,7 @@ class Di
      * Objects container
      * @var array
      */
-    private $_objects = array();
+    private $objects = array();
 
     /**
      * Init the object
@@ -17,7 +17,7 @@ class Di
      */
     public function __construct()
     {
-        // nothing to see, move along
+        // these are not the constructors you were looking for..
     }
 
     /**
@@ -27,7 +27,7 @@ class Di
      * 
      * @return null
      */
-    public function register($instance,$alias=null)
+    public function register($instance, $alias=null)
     {
         if (!is_array($instance)) {
             $instance = array($instance);
@@ -36,8 +36,8 @@ class Di
             $className = ($alias !== null) 
                 ? $alias : str_replace(__NAMESPACE__.'\\', '', get_class($i));
 
-            if (!array_key_exists($className, $this->_objects)) {
-                $this->_objects[$className] = $i;
+            if (!array_key_exists($className, $this->objects)) {
+                $this->objects[$className] = $i;
             }
         }
     }
@@ -51,8 +51,8 @@ class Di
      */
     public function get($name)
     {
-        return (array_key_exists($name, $this->_objects))
-            ? $this->_objects[$name] : null;
+        return (array_key_exists($name, $this->objects))
+            ? $this->objects[$name] : null;
     }
 
     /**
@@ -60,7 +60,7 @@ class Di
      * 
      * @param string $name Object name
      * 
-     * @return [type]       [description]
+     * @return object
      */
     public function __get($name)
     {

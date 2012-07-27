@@ -8,37 +8,37 @@ class Input extends Base
      * Internal variable for $_GET values
      * @var array
      */
-    private $_get     = array();
+    private $get     = array();
 
     /**
      * Internal variable for $_POST values
      * @var array
      */
-    private $_post    = array();
+    private $post    = array();
 
     /**
      * Internal variable for $_REQUEST values
      * @var array
      */
-    private $_request = array();
+    private $request = array();
 
     /**
      * Internal variable for $_FILES values
      * @var array
      */
-    private $_files   = array();
+    private $files   = array();
 
     /**
      * Internal variable for $_SERVER values
      * @var array
      */
-    private $_server   = array();
+    private $server   = array();
 
     /**
      * Internal variable for $_SESSION values
      * @var array
      */
-    private $_session  = array();
+    private $session  = array();
 
     /**
      * Intiitalize the object and extract the superglobals
@@ -47,16 +47,16 @@ class Input extends Base
      * 
      * @return null
      */
-    public function __construct($di)
+    public function __construct(Di $di)
     {
-        $this->_get     = $_GET;
-        $this->_post    = $_POST;
-        $this->_request = $_REQUEST;
-        $this->_files   = $_FILES;
-        $this->_server  = $_SERVER;
-        $this->_session = $_SESSION;
+        $this->get     = $_GET;
+        $this->post    = $_POST;
+        $this->request = $_REQUEST;
+        $this->files   = $_FILES;
+        $this->server  = $_SERVER;
+        $this->session = $_SESSION;
 
-        unset($_GET,$_POST,$_REQUEST,$_FILES,$_SERVER);
+        unset($_GET, $_POST, $_REQUEST, $_FILES, $_SERVER);
 
         parent::__construct($di);
     }
@@ -69,10 +69,10 @@ class Input extends Base
      * 
      * @return mixed Either null if the value is (false|null) or the actual value
      */
-    private function _filterInput($name,$value)
+    private function filterInput($name, $value)
     {
         // look for its filter(s)
-        $filter = $this->_di->get('Filter');
+        $filter = $this->di->get('Filter');
 
         if ($filter == null) {
             throw new \Exception('No filter object defined!');
@@ -91,7 +91,7 @@ class Input extends Base
      * 
      * @return object Shield\Input instance
      */
-    public function set($type,$name,$value)
+    public function set($type, $name, $value)
     {
         $type = '_'.strtolower($type);
 
@@ -127,16 +127,16 @@ class Input extends Base
      * 
      * @return mixed Either NULL or the value
      */
-    public function get($name,$escape=true)
+    public function get($name, $escape=true)
     {
-        if (isset($this->_get[$name])) {
+        if (isset($this->get[$name])) {
             if ($escape === true) {
-                return $this->_filterInput($name, $this->_get[$name]);
+                return $this->filterInput($name, $this->get[$name]);
             } else {
-                $this->_throwError(
-                    'You are using the raw GET "'.$name.'" value! Use with caution!'
+                $this->throwError(
+                    'You are using the raw GET value of "'.$name.'"! Use with caution!'
                 );
-                return $this->_get[$name];
+                return $this->get[$name];
             }
         } else {
             return null;
@@ -152,14 +152,14 @@ class Input extends Base
      */
     public function post($name,$escape=true)
     {
-        if (isset($this->_post[$name])) {
+        if (isset($this->post[$name])) {
             if ($escape === true) {
-                return $this->_filterInput($name, $this->_post[$name]);
+                return $this->filterInput($name, $this->post[$name]);
             } else {
-                $this->_throwError(
-                    'You are using the raw POST "'.$name.'" value! Use with caution!'
+                $this->throwError(
+                    'You are using the raw POST value of "'.$name.'"! Use with caution!'
                 );
-                return $this->_post[$name];
+                return $this->post[$name];
             }
         } else {
             return null;
@@ -175,14 +175,14 @@ class Input extends Base
      */
     public function request($name,$escape=true)
     {
-        if (isset($this->_request[$name])) {
+        if (isset($this->request[$name])) {
             if ($escape === true) {
-                return $this->_filterInput($name, $this->_request[$name]);
+                return $this->filterInput($name, $this->request[$name]);
             } else {
-                $this->_throwError(
-                    'You are using the raw REQUEST "'.$name.'" value! Use with caution!'
+                $this->throwError(
+                    'You are using the raw REQUEST value of "'.$name.'"! Use with caution!'
                 );
-                return $this->_request[$name];
+                return $this->request[$name];
             }
         } else {
             return null;
@@ -199,7 +199,7 @@ class Input extends Base
      */
     public function files($name)
     {
-        return (isset($this->_files[$name])) ? $this->_files[$name] : null;
+        return (isset($this->files[$name])) ? $this->files[$name] : null;
     }
 
     /**
@@ -211,14 +211,14 @@ class Input extends Base
      */
     public function server($name,$escape=true)
     {
-        if (isset($this->_server[$name])) {
+        if (isset($this->server[$name])) {
             if ($escape === true) {
-                return $this->_filterInput($name, $this->_server[$name]);
+                return $this->filterInput($name, $this->server[$name]);
             } else {
-                $this->_throwError(
-                    'You are using the raw SERVER "'.$name.'" value! Use with caution!'
+                $this->throwError(
+                    'You are using the raw SERVER value of "'.$name.'"! Use with caution!'
                 );
-                return $this->_server[$name];
+                return $this->server[$name];
             }
         } else {
             return null;
@@ -232,18 +232,18 @@ class Input extends Base
      * 
      * @return mixed Found value or NULL
      */
-    public function session($name,$escape=true)
+    public function session($name, $escape=true)
     {
-        if (isset($this->_session[$name]) || isset($_SESSION[$name])) {
-            $data = (isset($this->_session[$name])) ? $this->_session[$name] : $_SESSION[$name];
+        if (isset($this->session[$name]) || isset($_SESSION[$name])) {
+            $data = (isset($this->session[$name])) ? $this->session[$name] : $_SESSION[$name];
 
             if ($escape === true) {
-                return $this->_filterInput($name, $data);
+                return $this->filterInput($name, $data);
             } else {
-                $this->_throwError(
-                    'You are using the raw SERVER "'.$name.'" value! Use with caution!'
+                $this->throwError(
+                    'You are using the raw SESSION value of "'.$name.'"! Use with caution!'
                 );
-                return $this->_session[$name];
+                return $this->session[$name];
             }
         } else {
             return null;
