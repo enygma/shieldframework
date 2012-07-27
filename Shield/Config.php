@@ -70,6 +70,16 @@ class Config extends Base
     }
 
     /**
+     * Get the current value for the config filename
+     * 
+     * @return null
+     */
+    public function getConfigFile()
+    {
+        return $this->_configFile;
+    }
+
+    /**
      * Get the full set of config options
      * 
      * @return array Config container (options)
