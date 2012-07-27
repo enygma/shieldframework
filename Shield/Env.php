@@ -11,10 +11,10 @@ class Env extends Base
      */
     public function check()
     {
-        $this->_setFrameHeader();
+        $this->setFrameHeader();
 
-        $this->_checkRegisterGlobals();
-        $this->_checkMagicQuotes();
+        $this->checkRegisterGlobals();
+        $this->checkMagicQuotes();
     }
 
     /**
@@ -22,7 +22,7 @@ class Env extends Base
      * 
      * @return null
      */
-    private function _setFrameHeader()
+    private function setFrameHeader()
     {
         header('X-Frame-Options: deny');
     }
@@ -32,11 +32,11 @@ class Env extends Base
      * 
      * @return boolean Enabled/not enabled
      */
-    private function _checkRegisterGlobals()
+    private function checkRegisterGlobals()
     {
         $reg = ini_get('register_globals');
-        if ($reg !== '') {
-            $this->_throwError('SECURITY WARNING: register_globals is enabled! '
+        if ($reg != '' || $reg !== false) {
+            $this->throwError('SECURITY WARNING: register_globals is enabled! '
                 .'Please consider disabling.');
         } else {
             return true;
@@ -48,12 +48,12 @@ class Env extends Base
      * 
      * @return boolean Enabled/not enabled
      */
-    private function _checkMagicQuotes()
+    private function checkMagicQuotes()
     {
         $quotes = ini_get('magic_quotes');
 
         if ($quotes !== '' && $quotes !== false) {
-            $this->_throwError('SECURITY WARNING: magic_quotes is enabled! '
+            $this->throwError('SECURITY WARNING: magic_quotes is enabled! '
                 .'Please consider disabling');
         } else {
             return true;
