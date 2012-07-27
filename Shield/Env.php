@@ -37,7 +37,7 @@ class Env extends Base
         $reg = ini_get('register_globals');
         if ($reg !== '') {
             $this->_throwError('SECURITY WARNING: register_globals is enabled! '
-                .'Please consider disabiling.');
+                .'Please consider disabling.');
         } else {
             return true;
         }
@@ -54,7 +54,7 @@ class Env extends Base
 
         if ($quotes !== '' && $quotes !== false) {
             $this->_throwError('SECURITY WARNING: magic_quotes is enabled! '
-                .'Please consider disabiling');
+                .'Please consider disabling');
         } else {
             return true;
         }
