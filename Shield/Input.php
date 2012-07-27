@@ -234,9 +234,11 @@ class Input extends Base
      */
     public function session($name,$escape=true)
     {
-        if (isset($this->_session[$name])) {
+        if (isset($this->_session[$name]) || isset($_SESSION[$name])) {
+            $data = (isset($this->_session[$name])) ? $this->_session[$name] : $_SESSION[$name];
+
             if ($escape === true) {
-                return $this->_filterInput($name, $this->_session[$name]);
+                return $this->_filterInput($name, $data);
             } else {
                 $this->_throwError(
                     'You are using the raw SERVER "'.$name.'" value! Use with caution!'

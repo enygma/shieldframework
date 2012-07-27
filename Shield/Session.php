@@ -52,7 +52,8 @@ class Session extends Base
     public function write($id,$data)
     {
         $path = $this->_savePathRoot.'/shield_'.$id;
-        $data = mcrypt_encrypt(MCRYPT_DES, $this->_salt, $data, MCRYPT_MODE_ECB);
+        $data = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $this->_salt, $data, MCRYPT_MODE_ECB);
+
         file_put_contents($path,$data);
     }
 
@@ -82,7 +83,7 @@ class Session extends Base
 
         if (is_file($path)) {
             $data = file_get_contents($path);
-            $data = mcrypt_decrypt(MCRYPT_DES, $this->_salt, $data, MCRYPT_MODE_ECB);
+            $data = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $this->_salt, $data, MCRYPT_MODE_ECB);
         }
 
         return $data;
