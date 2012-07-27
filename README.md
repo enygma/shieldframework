@@ -8,6 +8,13 @@ that was designed with security in mind.
 
 This project is under a MIT license.
 
+Disclaimer
+----------------
+*Please note:* This framework is a work in progress and is serving as a resource to learn more
+about PHP and web application security. Use of this framework will *not* provide the perfect
+security for your application, nor should it be considered an ultimate resource for security 
+best practices.
+
 ### Features:
 - Output filtering on all values (preventing XSS)
 - Logging on all actions
