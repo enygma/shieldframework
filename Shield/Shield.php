@@ -8,21 +8,25 @@ class Shield
      * Routing options container (paths & closures)
      * @var array
      */
-    private $_routes  = array();
+    private $routes  = array();
 
     /**
      * Logging object (Shield\Log)
      * @var object
      */
-    private $_log     = null;
+    private $log     = null;
 
     /**
      * Error reporting level
      * @var string
      */
-    private $_errorLevel = '-1';
-
-    private $_errorConstants = array(
+    private $errorLevel = '-1';
+    
+    /**
+     * Error level constants
+     * @var array
+     */
+    private $errorConstants = array(
         1       => 'Error',
         2       => 'Warning',
         4       => 'Parse error',
@@ -67,8 +71,8 @@ class Shield
         error_reporting(-1);
         ini_set('display_errors', 1);
 
-        spl_autoload_register(array($this,'_load'));
-        set_error_handler(array($this,'_errorHandler'));
+        spl_autoload_register(array($this, '_load'));
+        set_error_handler(array($this, '_errorHandler'));
 
         // make our DI container
         $this->di = new Di();
@@ -93,10 +97,10 @@ class Shield
 
         // set up the view and logger objects
         $this->view = new View($this->di);
-        $this->_log = new Log($this->di);
+        $this->log  = new Log($this->di);
 
         $this->di->register(
-            array($input,$this->view,$this->_log)
+            array($input, $this->view, $this->log)
         );
     }
 
@@ -115,7 +119,7 @@ class Shield
         $obj = $this->di->get($className);
 
         if ($obj == null) {
-            $this->_throwError('Property could not be found!');
+            $this->throwError('Property could not be found!');
         }
 
         return $obj;
@@ -129,16 +133,16 @@ class Shield
      * 
      * @return null
      */
-    public function __call($func,$args)
+    public function __call($func, $args)
     {
         $func = strtolower($func);
         $path = strtolower($args[0]);
 
         if (isset($args[1])) {
-            $this->_routes[$func][$path] = $args[1];
+            $this->routes[$func][$path] = $args[1];
             $this->di->Log->log('SETTING PATH ['.strtoupper($func).']: '.$path);    
         } else {
-            $this->_throwError('No path to set for : '.strtoupper($func));
+            $this->throwError('No path to set for : '.strtoupper($func));
             $this->di->Log->log('NO PATH TO SET ['.strtoupper($func).']: '.$path);    
         }
     }
@@ -156,7 +160,7 @@ class Shield
         if (is_file($path)) {
             include_once $path;
         } else {
-            $this->_throwError('Could not load class: '.$className);
+            $this->throwError('Could not load class: '.$className);
         }
     }
 
@@ -175,16 +179,16 @@ class Shield
         $uri    = strtolower(str_replace('?'.$queryString, '', $requestUri));
         $method = strtolower($requestMethod);
 
-        if (isset($this->_routes[$method][$uri])) {
+        if (isset($this->routes[$method][$uri])) {
 
             // route match!
             $this->di->get('Log')->log('ROUTE MATCH ['.strtoupper($method).']: '.$uri);
-            $routeClosure = $this->_routes[$method][$uri]();
+            $routeClosure = $this->routes[$method][$uri]();
 
             echo $this->view->render($routeClosure);
         } else {
             $this->di->get('Log')->log('NO ROUTE MATCH ['.strtoupper($method).']: '.$uri);
-            $this->_throwError('No route match for "'.$uri.'"');
+            $this->throwError('No route match for "'.$uri.'"');
         }
     }
 
@@ -196,15 +200,15 @@ class Shield
      * 
      * @return null
      */
-    protected function _throwError($msg,$level=E_USER_WARNING)
+    protected function throwError($msg, $level=E_USER_WARNING)
     {
         trigger_error($msg, $level);
     }
 
-    public function _errorHandler($errno,$errstr,$errfile,$errline)
+    public function _errorHandler($errno, $errstr, $errfile, $errline)
     {
-        $errString = (array_key_exists($errno, $this->_errorConstants))
-            ? $this->_errorConstants[$errno] : $errno;
+        $errString = (array_key_exists($errno, $this->errorConstants))
+            ? $this->errorConstants[$errno] : $errno;
 
         echo '<b>'.$errString.':</b> '.$errstr.'<br/>';
 
