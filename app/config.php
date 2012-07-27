@@ -7,6 +7,11 @@ return array(
     //'log_path' => '/tmp'
     
     /**
+     * Use this to set the sessions directory
+     */
+    'session_path' => '/tmp',
+    
+    /**
      * Use this to set the cypher key for the session to your value
      */
     //'session_key' => null

@@ -8,13 +8,13 @@ class Session extends Base
      * Path to save the sessions to
      * @var string
      */
-    private $_savePathRoot  = '/tmp';
+    private $savePathRoot  = '/tmp';
 
     /**
      * Save path of the saved path
      * @var string
      */
-    private $_savePath      = '';
+    private $savePath      = '';
 
     /**
      * Salt for hashing the session data
@@ -27,7 +27,7 @@ class Session extends Base
      * 
      * @return null
      */
-    public function __construct($di)
+    public function __construct(Di $di)
     {
         session_set_save_handler(
             array($this, "open"),
@@ -42,6 +42,10 @@ class Session extends Base
         if ($sessionKey !== null) {
             $this->_key = $sessionKey;
         }
+        $sessionPath = $di->get('Config')->get('session_path');
+        if ($sessionPath !== null) {
+        	$this->savePathRoot = $sessionPath;
+        }
 
         parent::__construct($di);
     }
@@ -54,12 +58,14 @@ class Session extends Base
      * 
      * @return null
      */
-    public function write($id,$data)
+    public function write($id, $data)
     {
-        $path = $this->_savePathRoot.'/shield_'.$id;
-        $data = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $this->_key, $data, MCRYPT_MODE_CBC);
+        $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
+        $iv      = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+        $path    = $this->savePathRoot.'/shield_'.$id;
+        $data    = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $this->_key, $data, MCRYPT_MODE_CBC, $iv);
 
-        file_put_contents($path,$data);
+        file_put_contents($path, $data);
     }
 
     /**
@@ -83,12 +89,14 @@ class Session extends Base
      */
     public function read($id)
     {
-        $path = $this->_savePathRoot.'/shield_'.$id;
+        $path = $this->savePathRoot.'/shield_'.$id;
         $data = null;
 
         if (is_file($path)) {
-            $data = file_get_contents($path);
-            $data = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $this->_key, $data, MCRYPT_MODE_CBC);
+            $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
+            $iv      = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+            $data    = file_get_contents($path);
+            $data    = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $this->_key, $data, MCRYPT_MODE_CBC, $iv);
         }
 
         return $data;
@@ -113,7 +121,7 @@ class Session extends Base
      */
     public function gc($maxlifetime)
     {
-        $path = $this->_savePathRoot.'/shield_*';
+        $path = $this->savePathRoot.'/shield_*';
 
         foreach (glob($path) as $file) {
             if (filemtime($file) + $maxlifetime < time() && file_exists($file)) {
@@ -132,7 +140,7 @@ class Session extends Base
      * 
      * @return null
      */
-    public function open($savePath,$sessionId)
+    public function open($savePath, $sessionId)
     {
         // open session
     }
@@ -146,7 +154,7 @@ class Session extends Base
      */
     public function destroy($id)
     {
-        $path = $this->_savePathRoot.'/shield_'.$id;
+        $path = $this->savePathRoot.'/shield_'.$id;
         if (is_file($path)) {
             unlink($path);
         }
