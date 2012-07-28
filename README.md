@@ -136,6 +136,12 @@ Handle output to the page
 
 *NOTE:* All values are escaped/filtered by default to prevent XSS. This can be overridden if desired.
 
+### Template
+A basic templating engine included in the framework. By default it looks for a file named with the string given (in views/) or falls back to a `str_replace` method treating it as a string.
+* `render($template)`: Either the name of the template file (no .php) or the string to use as a template
+
+*NOTE:* If you choose to use the string as a template (no file), you must use the "[varName]" notation to get the values to substitute. Values can be set directly to the template instance (ex. `$app->view->template->test = 'foo';`)
+
 Configuration
 --------------
 An optional `config.php` file can be placed in the same root as your front controller (probably `index.php`) so
