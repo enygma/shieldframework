@@ -159,6 +159,17 @@ return array(
 ### Available Config options
 * `log_path`: Set the default logging path
 
+How To Contribute
+--------------
+First off, thanks for considering submitting changes for the project - help is always appreciated!
+If you're going to contribute to the project, here's a few simple steps to follow:
+
+* When contributing, please make a branch on your clone of the repo and commit your changes there (
+    this makes it *much* simpler when the time comes to merge)
+* Submit a pull request with good detail on what changed - reading through code is fun, but a summary 
+    is better
+* Contact information is below - feel free to email or send a message on github if you have questions!
+
 Contact
 --------------
 Chris Cornutt <ccornutt@phpdeveloper.org>
