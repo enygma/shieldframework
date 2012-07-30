@@ -76,7 +76,7 @@ class Config extends Base
      */
     public function getConfigFile()
     {
-        return $this->_configFile;
+        return $this->configFile;
     }
 
     /**

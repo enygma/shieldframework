@@ -47,7 +47,7 @@ class Template extends Base
     public function render($template)
     {
         // first see if what we've been given is a file
-        $templateFile = $this->_di->get('View')->getViewDir().
+        $templateFile = $this->di->get('View')->getViewDir().
             '/'.$template.'.php';
 
         if (is_file($templateFile)) {
