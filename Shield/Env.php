@@ -35,7 +35,7 @@ class Env extends Base
     private function checkRegisterGlobals()
     {
         $reg = ini_get('register_globals');
-        if ($reg != '' || $reg !== false) {
+        if ($reg != '' && $reg !== false && $false !== 0) {
             $this->throwError('SECURITY WARNING: register_globals is enabled! '
                 .'Please consider disabling.');
         } else {
