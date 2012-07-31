@@ -20,7 +20,7 @@ best practices.
 - Logging on all actions
 - Input filtering functionality for accessing all superglobal information
 - Uses PHP's own filtering for data sanitization
-- Encrypted session handling (RIJNDAEL_256/MCRYPT_MODE_CBC)
+- Encrypted session handling (RIJNDAEL_256/MCRYPT_MODE_CBC, uses IV)
 - Custom cookie handling (including httpOnly)
 - Customized error handling to avoid exposing filesystem information
 - Basic templating/view system
