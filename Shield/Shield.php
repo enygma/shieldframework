@@ -187,6 +187,9 @@ class Shield
 
             echo $this->view->render($routeClosure);
         } else {
+            // return a 404 header
+            header('HTTP/1.0 404 Not Found');
+
             $this->di->get('Log')->log('NO ROUTE MATCH ['.strtoupper($method).']: '.$uri);
             $this->throwError('No route match for "'.$uri.'"');
         }
