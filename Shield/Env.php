@@ -34,8 +34,7 @@ class Env extends Base
      */
     private function checkRegisterGlobals()
     {
-        $reg = ini_get('register_globals');
-        if ($reg != '' && $reg !== false && $false !== 0) {
+        if (ini_get('register_globals')) {
             $this->throwError('SECURITY WARNING: register_globals is enabled! '
                 .'Please consider disabling.');
         } else {
@@ -50,9 +49,7 @@ class Env extends Base
      */
     private function checkMagicQuotes()
     {
-        $quotes = ini_get('magic_quotes');
-
-        if ($quotes !== '' && $quotes !== false) {
+        if (get_magic_quotes_gpc() || get_magic_quotes_runtime()) {
             $this->throwError('SECURITY WARNING: magic_quotes is enabled! '
                 .'Please consider disabling');
         } else {
