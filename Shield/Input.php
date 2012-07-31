@@ -95,8 +95,12 @@ class Input extends Base
     {
         $type = strtolower($type);
 
-        if (isset($this->$type)) {
-            $this->$type[$name] = $value;
+        if (property_exists($this, $type)) {
+            if (!is_array($this->$type)) {
+                $this->$type = array();
+            }
+            $arr = &$this->$type;
+            $arr[$name] = $value;
 
             //sessions are special
             if ($type == 'session') {
