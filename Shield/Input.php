@@ -93,13 +93,13 @@ class Input extends Base
      */
     public function set($type, $name, $value)
     {
-        $type = '_'.strtolower($type);
+        $type = strtolower($type);
 
         if (isset($this->$type)) {
             $this->$type[$name] = $value;
 
             //sessions are special
-            if ($type == '_session') {
+            if ($type == 'session') {
                 $_SESSION[$name] = $value;
             }
         }

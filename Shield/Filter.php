@@ -39,7 +39,7 @@ class Filter extends Base
         $func = array();
         if (isset($this->filters[$name])) {
             foreach ($this->filters[$name] as $filter) {
-                $func[] = 'filter'.ucwords(strtolower($filter));
+                $func[] = $filter;
             }
         }
         return $func;
