@@ -12,6 +12,11 @@ $app->get('/', function() use ($app){
     /** Add a filter of type "email" */
     $app->filter->add('test', 'email');
 
+    /** Adding a filter with a closure **/
+    $app->filter->add('test1', function($value){ 
+        echo 'my value: '.$value; return $value; 
+    });
+
     /** GETs from the URL, "?test=foo"
         this will be empty because there's an "email" filter on it */
     echo "?test : {$app->input->get('test')}\n";;

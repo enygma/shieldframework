@@ -53,9 +53,13 @@ class Filter extends Base
             $filters = array('striptags');
         }
         foreach ($filters as $filter) {
-            $func = 'filter'.ucwords(strtolower($filter));
-            if (method_exists($this, $func)) {
-                $value = $this->$func($value);
+            if ($filter instanceof \Closure) {
+                $value = $filter($value);
+            } else {
+                $func = 'filter'.ucwords(strtolower($filter));
+                if (method_exists($this, $func)) {
+                    $value = $this->$func($value);
+                }
             }
         }
         return $value;
