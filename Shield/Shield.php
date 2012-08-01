@@ -174,6 +174,17 @@ class Shield
         $requestMethod = $this->di->get('Input')->server('REQUEST_METHOD');
         $queryString   = $this->di->get('Input')->server('QUERY_STRING');
         $requestUri    = $this->di->get('Input')->server('REQUEST_URI');
+        $remoteAddr    = $this->di->get('Input')->server('REMOTE_ADDR');
+
+        // if we have the config option, see if they're allowed
+        $allowedHosts = $this->di->get('Config')->get('allowed_hosts');
+        if (!empty($allowedHosts)) {
+            if (!in_array($remoteAddr, $allowedHosts)) {
+                // not allowed, fail!
+                header('HTTP/1.0 401 Not Authorized');
+                return false;
+            }
+        }
 
         // try and match our route and request type
         $uri    = strtolower(str_replace('?'.$queryString, '', $requestUri));

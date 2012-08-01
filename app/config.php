@@ -15,4 +15,9 @@ return array(
      * Use this to set the cypher key for the session to your value
      */
     //'session_key' => null
+    
+    /**
+     * Put in the IP addresses of allowed hosts here
+     */
+    //'allowed_hosts' => array('127.0.0.1')
 );
