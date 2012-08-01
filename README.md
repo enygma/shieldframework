@@ -24,6 +24,7 @@ best practices.
 - Custom cookie handling (including httpOnly)
 - Customized error handling to avoid exposing filesystem information
 - Basic templating/view system
+- IP-based access control
 
 Requires
 ---------------
@@ -172,6 +173,9 @@ return array(
 
 ### Available Config options
 * `log_path`: Set the default logging path
+* `session_path`: Set the path on the local filesystem to save the session files to
+* `session_key`: Customize the key used for the session encryption
+* `allowed_hosts`: Array of hosts allowed to make requests (whitelisting)
 
 How To Contribute
 --------------
