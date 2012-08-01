@@ -115,6 +115,20 @@ Filter values based on filter types (supported are: email, striptags). Filters a
 
 *NOTE:* If no filters are specified, it will execute a "strip_tags" on the data by default.
 
+The `$type` parameter for the `add()` method can either be a string for the filter type or it can be a \Closure that will
+be given the value of the field as a parameter - for example:
+
+```php
+<?php
+
+$app->filter->add('myField', function($value) {
+    return 'returned: '.$value;
+});
+```
+
+You must be sure to return from this closure, otherwise the filtering will return null.
+
+
 ### Input
 Pull values from the PHP superglobals (filtered)
 * `get($name)`: Pull from the $_GET, `$name` is name of variable
