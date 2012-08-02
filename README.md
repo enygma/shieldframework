@@ -1,5 +1,6 @@
 Shield : A Security-Minded Microframework
 ===============
+[![Build Status](https://secure.travis-ci.org/enygma/shieldframework.png?branch=master)](http://travis-ci.org/enygma/shieldframework)
 
 In my efforts to learn more about security best practices in PHP, I noticed that most of the PHP 
 frameworks out there left it up to the developer to correctly handle input/output/etc themselves.
@@ -171,6 +172,21 @@ return array(
 );
 ```
 
+Additionally, you can use a "dotted notation" to find configuration options. So, for example, to find the value below:
+
+```php
+<?php
+return array(
+    'foo' => array(
+        'bar' => array(
+            'baz' => 'testing this'
+        )
+    )
+);
+```
+
+You can use `$app->config->get('foo.bar.baz');` to get the value "testing this".
+
 ### Available Config options
 * `log_path`: Set the default logging path
 * `session_path`: Set the path on the local filesystem to save the session files to
@@ -188,11 +204,25 @@ If you're going to contribute to the project, here's a few simple steps to follo
     is better
 * Contact information is below - feel free to email or send a message on github if you have questions!
 
+Shield and the OWASP "Top Ten"
+--------------
+One of the "gold standards" in the web application security community is the infamous ["Top Ten"](http://owasptop10.googlecode.com/files/OWASP%20Top%2010%20-%202010.pdf) list of common security issues that web apps have. Shield, being the nice framework that it is, tries to help protect you and your app from these problems. Here's how:
+
+* A1: Injection -
+* A2: Cross-Site Scripting - Before any information is accessed it is passed through at least one filter. Additionally, you can provide custom filtering via closures.
+* A3: Broken Authentication & Session Management - All session information is encrypted as it is stored using a Rijdael (256) method with an initialization vector.
+* A4: Insecure Direct Object References - Currently there's no permissioning system (and no auth system) in the framework.
+* A5: Cross-Site Request Forgery - Currently not prevented.
+* A6: Security Misconfiguration - The framework checks different PHP configuration settings to ensure that common security issues are mitigated.
+* A7: Insecure Cryptographic Storage - As previously mentioned, the only storage the framework does - sessions - stores the values encrypted.
+* A8: Failure to Restrict URL Access - Included in the framework is the ability to restrict based on IP. More fine-grained restriction is coming soon.
+* A9: Insufficient Transport Layer Protection - The framework currently does not prevent the use of HTTP over HTTPS.
+* A10: Unvalidated redirects & Forwards - The framework does not provide a mechanism for redirecting/forwarding.
+
 Contact
 --------------
 Chris Cornutt <ccornutt@phpdeveloper.org>
 
-@enygma
+[@enygma](http://twitter.com/enygma)
 
-[![Build Status](https://secure.travis-ci.org/enygma/shieldframework.png?branch=master)](http://travis-ci.org/enygma/shieldframework)
 
