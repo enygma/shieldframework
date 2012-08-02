@@ -96,7 +96,7 @@ class Session extends Base
             $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
             $iv      = mcrypt_create_iv($iv_size, MCRYPT_RAND);
             $data    = file_get_contents($path);
-            $data    = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $this->_key, $data, MCRYPT_MODE_CBC, $iv);
+            $data    = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $this->_key, $data, MCRYPT_MODE_CBC, $iv);
         }
 
         return $data;
