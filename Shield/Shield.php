@@ -68,40 +68,24 @@ class Shield
     public function __construct()
     {
         // force all error messages
-        error_reporting(-1);
-        ini_set('display_errors', 1);
-
         spl_autoload_register(array($this, '_load'));
         set_error_handler(array($this, '_errorHandler'));
 
         // make our DI container
         $this->di = new Di();
 
+        // init the config and read it in (if it exists)
         $config = new Config($this->di);
         $config->load();
         $this->di->register($config);
 
-        // set up the custom encrypted session handler
-        ini_set('session.save_handler', 'files');
-        $this->di->register(new Session($this->di));
-        session_start();
-
-        // grab our input & filter
-        $this->di->register(new Filter($this->di));
-        $input  = new Input($this->di);
-
-        session_set_cookie_params(3600, '/', $input->server('HTTP_HOST'), 1, true);
-
-        $env = new Env($this->di);
-        $env->check();
+        $bs = new Bootstrap($this->di);
 
         // set up the view and logger objects
         $this->view = new View($this->di);
         $this->log  = new Log($this->di);
 
-        $this->di->register(
-            array($input, $this->view, $this->log)
-        );
+        $this->di->register(array($this->view, $this->log));
     }
 
     /**
