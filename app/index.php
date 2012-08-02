@@ -23,9 +23,11 @@ $app->get('/', function() use ($app){
 
     /** GETs from the URL, "&test1=foo" */
     echo "&test1: {$app->input->get('test1')}\n";
+
+    echo 'config: '; var_export($app->config->get('test.foo')); echo '<br/><br/>';
     
     /** Render the template output */
-    return $app->view->render('index1: <a href="#[test]">[fake]</a>');
+    return $app->view->render('index1: <a href="#[test]">[fake]</a><br/><br/>');
 });
 
 /** Define a "/test" route */

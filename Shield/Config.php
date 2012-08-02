@@ -98,7 +98,20 @@ class Config extends Base
      */
     public function get($name)
     {
-        return (isset($this->config[$name])) ? $this->config[$name] : null;
+        if (strstr($name, '.') !== false) {
+            // an array, split it and try to find it
+            $parts   = explode('.',$name);
+            $current = $this->config;
+
+            foreach ($parts as $p) {
+                if (!isset($current[$p])) { return null; }
+                $current = $current[$p];
+            }
+            return $current;
+        } else {
+            // just a string
+            return (isset($this->config[$name])) ? $this->config[$name] : null;
+        }
     }
 
     /**

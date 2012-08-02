@@ -20,4 +20,8 @@ return array(
      * Put in the IP addresses of allowed hosts here
      */
     //'allowed_hosts' => array('127.0.0.1')
+    
+    'test' => array(
+        'foo' => 'bar'
+    )
 );
