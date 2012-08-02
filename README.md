@@ -208,7 +208,7 @@ Shield and the OWASP "Top Ten"
 --------------
 One of the "gold standards" in the web application security community is the infamous ["Top Ten"](http://owasptop10.googlecode.com/files/OWASP%20Top%2010%20-%202010.pdf) list of common security issues that web apps have. Shield, being the nice framework that it is, tries to help protect you and your app from these problems. Here's how:
 
-* A1: Injection -
+* A1: Injection - All user input is filtered with at least one filter (including all PHP superglobals).
 * A2: Cross-Site Scripting - Before any information is accessed it is passed through at least one filter. Additionally, you can provide custom filtering via closures.
 * A3: Broken Authentication & Session Management - All session information is encrypted as it is stored using a Rijdael (256) method with an initialization vector.
 * A4: Insecure Direct Object References - Currently there's no permissioning system (and no auth system) in the framework.
