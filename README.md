@@ -9,6 +9,8 @@ that was designed with security in mind.
 
 This project is under a MIT license.
 
+[shieldframework.com](http://shieldframework.com)
+
 Disclaimer
 ----------------
 *Please note:* This framework is a work in progress and is serving as a resource to learn more
