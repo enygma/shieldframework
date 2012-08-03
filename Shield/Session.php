@@ -43,10 +43,9 @@ class Session extends Base
             $this->_key = $sessionKey;
         }
         $sessionPath = $di->get('Config')->get('session_path');
-        if ($sessionPath !== null) {
-        	$this->savePathRoot = $sessionPath;
-        }
-
+        $this->savePathRoot = ($sessionPath == null)
+            ? ini_get('session.save_path') : $sessionPath;
+        
         parent::__construct($di);
     }
 
@@ -60,9 +59,14 @@ class Session extends Base
      */
     public function write($id, $data)
     {
+        echo 'IN: '; var_export($data)."\n";
+
         $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
         $iv      = mcrypt_create_iv($iv_size, MCRYPT_RAND);
         $path    = $this->savePathRoot.'/shield_'.$id;
+
+        // add in our IV and base64 encode the data
+        $data    = base64_encode($iv.'|'.$data);
         $data    = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $this->_key, $data, MCRYPT_MODE_CBC, $iv);
 
         file_put_contents($path, $data);
@@ -92,11 +96,26 @@ class Session extends Base
         $path = $this->savePathRoot.'/shield_'.$id;
         $data = null;
 
+        echo 'PATH: '.$path."\n";
+
+        echo "READABLE: "; var_export(is_readable($path)); echo "\n";
+
         if (is_file($path)) {
-            $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
-            $iv      = mcrypt_create_iv($iv_size, MCRYPT_RAND);
-            $data    = file_get_contents($path);
+            //$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
+            //$iv      = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+            $data     = file_get_contents($path);
+
+            // get the data and extract the IV
+            $sections = explode('|',base64_decode($data));
+
+            $iv   = $sections[0];
+            $data = $sections[1];
+
             $data    = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $this->_key, $data, MCRYPT_MODE_CBC, $iv);
+
+            echo "OUT: "; var_export($data)."\n";
+        } else {
+            echo 'not file';
         }
 
         return $data;
