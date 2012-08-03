@@ -20,7 +20,7 @@ class Session extends Base
      * Salt for hashing the session data
      * @var string
      */
-    private $_key          = 't3st!ng';
+    private $_key          = '282edfcf5073666f3a7ceaa5e748cf8128bd53359b6d8269ba2450404face0ac';
 
     private $_iv           = null; 
 
@@ -48,8 +48,8 @@ class Session extends Base
         $this->savePathRoot = ($sessionPath == null)
             ? ini_get('session.save_path') : $sessionPath;
         
-        $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
-        $this->_iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+        // $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
+        // $this->_iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
 
         parent::__construct($di);
     }
@@ -66,10 +66,20 @@ class Session extends Base
     {
         $path    = $this->savePathRoot.'/shield_'.$id;
 
-        // add in our IV and base64 encode the data
-        $data    = base64_encode($this->_iv.'|'.$data);
-        $data    = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $this->_key, $data, MCRYPT_MODE_CBC, $this->_iv);
+        //echo 'IV: '.$this->_iv;
+        $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
+        $iv      = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+        $keySize = mcrypt_get_key_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
 
+        $key = substr(sha1($this->_key), 0, $keySize);
+
+        error_log('WHITE iv/k: '.$iv_size.' -> '.$keySize.' --- '.strlen($key));
+
+        // add in our IV and base64 encode the data
+        $data    = base64_encode($iv.mcrypt_encrypt(
+            MCRYPT_RIJNDAEL_256, $key, $data, MCRYPT_MODE_CBC, $iv)
+        );
+        
         file_put_contents($path, $data);
     }
 
@@ -98,17 +108,19 @@ class Session extends Base
         $data = null;
 
         if (is_file($path)) {
-            //$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
-            //$iv      = mcrypt_create_iv($iv_size, MCRYPT_RAND);
             $data     = file_get_contents($path);
 
             // get the data and extract the IV
-            $sections = explode('|',base64_decode($data));
+            $data = base64_decode($data, true);
 
-            $iv   = $sections[0];
-            $data = $sections[1];
+            $ivSize  = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
+            $keySize = mcrypt_get_key_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
+            $key     = substr(sha1($this->_key), 0, $keySize);
 
-            $data    = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $this->_key, $data, MCRYPT_MODE_CBC, $iv);
+            $iv   = substr($data,0,$ivSize);
+            $data = substr($data,$ivSize);
+
+            $data = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, $data, MCRYPT_MODE_CBC, $iv);
         }
 
         return $data;
