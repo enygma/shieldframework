@@ -8,7 +8,7 @@ class Config extends Base
      * Configuration options container
      * @var array
      */
-    private $config = array();
+    private $config = array('general'=>array());
 
     /**
      * Configuration file name (default)
@@ -50,9 +50,9 @@ class Config extends Base
      * 
      * @param array $config Array of configuration options
      */
-    public function setConfig($config)
+    public function setConfig($config,$context='general')
     {
-        $this->config = $config;
+        $this->config[$context] = $config;
         return $this;
     }
 
@@ -96,12 +96,12 @@ class Config extends Base
      * 
      * @return mixed Either a string value or an array
      */
-    public function get($name)
+    public function get($name,$context='general')
     {
         if (strstr($name, '.') !== false) {
             // an array, split it and try to find it
             $parts   = explode('.',$name);
-            $current = $this->config;
+            $current = $this->config[$context];
 
             foreach ($parts as $p) {
                 if (!isset($current[$p])) { return null; }
@@ -110,7 +110,8 @@ class Config extends Base
             return $current;
         } else {
             // just a string
-            return (isset($this->config[$name])) ? $this->config[$name] : null;
+            return (isset($this->config[$context][$name])) 
+                ? $this->config[$context][$name] : null;
         }
     }
 
@@ -122,9 +123,9 @@ class Config extends Base
      * 
      * @return object Shield\Config
      */
-    public function set($name,$value)
+    public function set($name,$value,$context='general')
     {
-        $this->config[$name] = $value;
+        $this->config[$context][$name] = $value;
         return $this;
     }
 }
