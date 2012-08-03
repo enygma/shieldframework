@@ -1,5 +1,6 @@
 <?php
 //PHPunit bootstrap
+ob_start();
 
 function load($className)
 {
