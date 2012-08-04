@@ -70,10 +70,7 @@ class Session extends Base
         $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
         $iv      = mcrypt_create_iv($iv_size, MCRYPT_RAND);
         $keySize = mcrypt_get_key_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
-
-        $key = substr(sha1($this->_key), 0, $keySize);
-
-        error_log('WHITE iv/k: '.$iv_size.' -> '.$keySize.' --- '.strlen($key));
+        $key     = substr(sha1($this->_key), 0, $keySize);
 
         // add in our IV and base64 encode the data
         $data    = base64_encode($iv.mcrypt_encrypt(
@@ -108,10 +105,9 @@ class Session extends Base
         $data = null;
 
         if (is_file($path)) {
-            $data     = file_get_contents($path);
-
             // get the data and extract the IV
-            $data = base64_decode($data, true);
+            $data    = file_get_contents($path);
+            $data    = base64_decode($data, true);
 
             $ivSize  = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
             $keySize = mcrypt_get_key_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
