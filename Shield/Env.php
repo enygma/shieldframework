@@ -11,8 +11,8 @@ class Env extends Base
      */
     public function check()
     {
+        $this->checkHttps();
         $this->setFrameHeader();
-
         $this->checkRegisterGlobals();
         $this->checkMagicQuotes();
     }
@@ -25,6 +25,29 @@ class Env extends Base
     private function setFrameHeader()
     {
         header('X-Frame-Options: deny');
+    }
+
+    /**
+     * Check to see if we need to move to HTTPS by default
+     * 
+     * @return null
+     */
+    private function checkHttps()
+    {
+        $config = $this->di->get('Config');
+        $input  = $this->di->get('Input');
+
+        // see if we need to be on HTTPS
+        $httpsCfg = $config->get('force_https');
+        $httpsSet = $input->server('HTTPS');
+
+        if ($httpsCfg == true && empty($httpsSet)) {
+            $host    = $input->server('HTTP_HOST');
+            $request = $input->server('REQUEST_URI');
+
+            $redirect= "https://".$host.$request;
+            header("Location: $redirect");
+        }
     }
 
     /**

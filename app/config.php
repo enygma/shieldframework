@@ -30,5 +30,10 @@ return array(
         * Use this to set the cipher key for the session to your value
         */
         'key'  => null
-    )
+    ),
+
+    /**
+     * Force the site to run under HTTPS (will try to redirect if HTTP)
+     */
+    'force_https' => false
 );
