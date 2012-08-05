@@ -28,6 +28,7 @@ best practices.
 - Customized error handling to avoid exposing filesystem information
 - Basic templating/view system
 - IP-based access control
+- Session fixation prevention
 
 Requires
 ---------------
@@ -191,8 +192,9 @@ You can use `$app->config->get('foo.bar.baz');` to get the value "testing this".
 
 ### Available Config options
 * `log_path`: Set the default logging path
-* `session_path`: Set the path on the local filesystem to save the session files to
-* `session_key`: Customize the key used for the session encryption
+* `session.path`: Set the path on the local filesystem to save the session files to
+* `session.key`: Customize the key used for the session encryption
+* `session.lock`: Enable/disable session locking (binds session to the IP+User Agent to help prevent fixation)
 * `allowed_hosts`: Array of hosts allowed to make requests (whitelisting)
 
 How To Contribute
