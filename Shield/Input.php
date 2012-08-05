@@ -49,16 +49,34 @@ class Input extends Base
      */
     public function __construct(Di $di)
     {
-        $this->get     = $_GET;
-        $this->post    = $_POST;
-        $this->request = $_REQUEST;
-        $this->files   = $_FILES;
-        $this->server  = $_SERVER;
-        $this->session = $_SESSION;
-
-        unset($_GET, $_POST, $_REQUEST, $_FILES, $_SERVER);
-
+        $this->load();
         parent::__construct($di);
+    }
+
+    /**
+     * Load the values into the input object
+     *     Pulls in values from superglobals
+     * 
+     * @return null
+     */
+    public function load()
+    {
+        $data = array(
+            'get'     => (isset($_GET)) ? $_GET : null, 
+            'post'    => (isset($_POST)) ? $_POST : null,
+            'request' => (isset($_REQUEST)) ? $_REQUEST : null,
+            'files'   => (isset($_FILES)) ? $_FILES : null,
+            'server'  => (isset($_SERVER)) ? $_SERVER : null,
+            'session' => (isset($_SESSION)) ? $_SESSION : null
+        );
+
+        foreach ($data as $name => $value) {
+            if ($value !== null) {
+                $this->$name = $value;
+                $global = strtoupper($name);
+                unset($$global);
+            }
+        }
     }
 
     /**
