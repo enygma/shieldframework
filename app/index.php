@@ -19,7 +19,7 @@ $app->get('/', function() use ($app){
 
     /** GETs from the URL, "?test=foo"
         this will be empty because there's an "email" filter on it */
-    echo "?test : {$app->input->get('test')}\n";;
+    echo "?test : {$app->input->get('test')}\n";
 
     /** GETs from the URL, "&test1=foo" */
     echo "&test1: {$app->input->get('test1')}\n";
