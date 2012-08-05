@@ -143,8 +143,9 @@ class Shield
         $path = __DIR__.'/'.str_replace('Shield\\', '/', $className).'.php';
         if (is_file($path)) {
             include_once $path;
+            return true;
         } else {
-            $this->throwError('Could not load class: '.$className);
+           return false;
         }
     }
 
