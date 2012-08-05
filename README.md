@@ -196,6 +196,7 @@ You can use `$app->config->get('foo.bar.baz');` to get the value "testing this".
 * `session.key`: Customize the key used for the session encryption
 * `session.lock`: Enable/disable session locking (binds session to the IP+User Agent to help prevent fixation)
 * `allowed_hosts`: Array of hosts allowed to make requests (whitelisting)
+* `force_https`: Allows you to force the use of HTTPS. Will redirect if enabled and HTTP is detected
 
 How To Contribute
 --------------
