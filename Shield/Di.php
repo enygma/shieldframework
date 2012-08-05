@@ -33,12 +33,7 @@ class Di
             $instance = array($instance);
         }
         foreach ($instance as $i) {
-            $className = ($alias !== null) 
-                ? $alias : str_replace(__NAMESPACE__.'\\', '', get_class($i));
-
-            if (!array_key_exists($className, $this->objects)) {
-                $this->objects[$className] = $i;
-            }
+            $this->createInstance($i, $alias);
         }
     }
 
@@ -49,10 +44,16 @@ class Di
      * 
      * @return mixed Either the object found or null
      */
-    public function get($name)
+    public function get($name, $autoInit=false)
     {
-        return (array_key_exists($name, $this->objects))
-            ? $this->objects[$name] : null;
+        if (array_key_exists($name, $this->objects)) {
+            return $this->objects[$name];
+        } else {
+            if ($autoInit == true) {
+                $this->createInstance($name);
+                return $this->objects[$name];
+            }
+        }
     }
 
     /**
@@ -65,5 +66,24 @@ class Di
     public function __get($name)
     {
         return $this->get($name);
+    }
+
+    private function createInstance($instance, $alias=null)
+    {
+        if (!is_object($instance)) {
+            // it's a string, make an object
+            $instance = __NAMESPACE__.'\\'.$instance;
+            $instance = new $instance($this);
+        }
+
+        $className = ($alias !== null) 
+            ? $alias : str_replace(__NAMESPACE__.'\\', '', get_class($instance));
+
+        if (!array_key_exists($className, $this->objects)) {
+            $this->objects[$className] = $instance;
+            return true;
+        } else {
+            return false;
+        }
     }
 }
