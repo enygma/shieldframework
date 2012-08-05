@@ -8,21 +8,21 @@ class Session extends Base
      * Path to save the sessions to
      * @var string
      */
-    private $savePathRoot  = '/tmp';
+    private $savePathRoot = '/tmp';
 
     /**
      * Save path of the saved path
      * @var string
      */
-    private $savePath      = '';
+    private $savePath = '';
 
     /**
      * Salt for hashing the session data
      * @var string
      */
-    private $_key          = '282edfcf5073666f3a7ceaa5e748cf8128bd53359b6d8269ba2450404face0ac';
+    private $key = '282edfcf5073666f3a7ceaa5e748cf8128bd53359b6d8269ba2450404face0ac';
 
-    private $_iv           = null; 
+    private $lock = false;
 
     /**
      * Init the object, set up the session config handling
@@ -40,18 +40,92 @@ class Session extends Base
             array($this, "gc")
         );
 
-        $sessionKey = $di->get('Config')->get('session_key');
+        $sessionKey = $di->get('Config')->get('session.key');
         if ($sessionKey !== null) {
-            $this->_key = $sessionKey;
+            $this->key = $sessionKey;
         }
-        $sessionPath = $di->get('Config')->get('session_path');
+        $sessionPath = $di->get('Config')->get('session.path');
         $this->savePathRoot = ($sessionPath == null)
             ? ini_get('session.save_path') : $sessionPath;
-        
-        // $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
-        // $this->_iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
 
         parent::__construct($di);
+    }
+
+    /**
+     * If locking is on, check the values to ensure there's a match
+     * 
+     * @return boolean Lock status
+     */
+    public function lock()
+    {
+        $this->di->get('Log', true)->log('Session locking in effect');
+
+        $sip = (isset($_SESSION['sIP'])) ? $_SESSION['sIP'] : null;
+        $sua = (isset($_SESSION['sUA'])) ? $_SESSION['sUA'] : null;
+
+        // if they're null, set them
+        if ($sip == null && $sua == null) {
+            $_SESSION['sIP'] = $_SERVER['REMOTE_ADDR'];
+            $_SESSION['sUA'] = $_SERVER['HTTP_USER_AGENT'];
+        } elseif ($sip !== null && $sua !== null) {
+            // see if we have a match, if not refresh()
+            if ($sip !== $_SERVER['REMOTE_ADDR'] || $sua !== $_SERVER['HTTP_USER_AGENT']) {
+                $this->di->get('Log', true)->log(
+                    'SECURITY ALERT: Session lock override attempt!'
+                );
+                $this->refresh();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Encrypt the given data
+     * 
+     * @param mixed $data Session data to encrypt
+     * 
+     * @return mixed $data Encrypted data
+     */
+    private function encrypt($data)
+    {
+        $ivSize  = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
+        $iv      = mcrypt_create_iv($ivSize, MCRYPT_RAND);
+        $keySize = mcrypt_get_key_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
+        $key     = substr(sha1($this->key), 0, $keySize);
+
+        // add in our IV and base64 encode the data
+        $data    = base64_encode(
+            $iv.mcrypt_encrypt(
+                MCRYPT_RIJNDAEL_256, $key, $data, MCRYPT_MODE_CBC, $iv
+            )
+        );
+        return $data;
+    }
+
+    /**
+     * Decrypt the given session data
+     * 
+     * @param mixed $data Data to decrypt
+     * 
+     * @return $data Decrypted data
+     */
+    private function decrypt($data)
+    {
+        $data    = base64_decode($data, true);
+
+        $ivSize  = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
+        $keySize = mcrypt_get_key_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
+        $key     = substr(sha1($this->key), 0, $keySize);
+
+        $iv   = substr($data, 0, $ivSize);
+        $data = substr($data, $ivSize);
+
+        $data = mcrypt_decrypt(
+            MCRYPT_RIJNDAEL_256, $key, $data, MCRYPT_MODE_CBC, $iv
+        );
+
+        return $data;
     }
 
     /**
@@ -64,18 +138,8 @@ class Session extends Base
      */
     public function write($id, $data)
     {
-        $path    = $this->savePathRoot.'/shield_'.$id;
-
-        //echo 'IV: '.$this->_iv;
-        $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
-        $iv      = mcrypt_create_iv($iv_size, MCRYPT_RAND);
-        $keySize = mcrypt_get_key_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
-        $key     = substr(sha1($this->_key), 0, $keySize);
-
-        // add in our IV and base64 encode the data
-        $data    = base64_encode($iv.mcrypt_encrypt(
-            MCRYPT_RIJNDAEL_256, $key, $data, MCRYPT_MODE_CBC, $iv)
-        );
+        $path = $this->savePathRoot.'/shield_'.$id;
+        $data = $this->encrypt($data);
         
         file_put_contents($path, $data);
     }
@@ -89,7 +153,7 @@ class Session extends Base
      */
     public function setKey($key)
     {
-        $this->_key = $key;
+        $this->key = $key;
     }
 
     /**
@@ -106,17 +170,8 @@ class Session extends Base
 
         if (is_file($path)) {
             // get the data and extract the IV
-            $data    = file_get_contents($path);
-            $data    = base64_decode($data, true);
-
-            $ivSize  = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
-            $keySize = mcrypt_get_key_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
-            $key     = substr(sha1($this->_key), 0, $keySize);
-
-            $iv   = substr($data,0,$ivSize);
-            $data = substr($data,$ivSize);
-
-            $data = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, $data, MCRYPT_MODE_CBC, $iv);
+            $data = file_get_contents($path);
+            $data = $this->decrypt($data);
         }
 
         return $data;
@@ -183,16 +238,20 @@ class Session extends Base
 
     /**
      * Refresh the session with a new ID
+     * DO NOT repopulate the session information
      * 
      * @return null
      */
     public function refresh()
     {
-        $sess = $this->_di->get('Input')->getAll('session');
-        $id = session_regenerate_id(true);
-        session_destroy();
-        session_start();
-        $_SESSION = $sess;
+        $sid = session_id();
+        if (!empty($sid)) {
+            error_log('refreshing session!');
+
+            $id = session_regenerate_id(true);
+            session_destroy();
+            session_start();
+        }
     }
 
 }

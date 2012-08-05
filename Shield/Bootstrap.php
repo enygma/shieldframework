@@ -31,8 +31,15 @@ class Bootstrap extends Base
     private function _initObjects(Di &$di)
     {
         // set up the custom encrypted session handler
-        $di->register(new Session($di));
+        $session = new Session($di);
+        $di->register($session);
         session_start();
+
+        // see if we need to lock our session
+        $sessionLock = $di->get('Config')->get('session.lock');
+        if ($sessionLock == true) {
+            $session->lock();
+        }
 
         // grab our input & filter
         $di->register(new Filter($di));

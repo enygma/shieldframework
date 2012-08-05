@@ -7,21 +7,28 @@ return array(
     //'log_path' => '/tmp'
     
     /**
-     * Use this to set the sessions directory
-     */
-    'session_path' => '/tmp',
-    
-    /**
-     * Use this to set the cypher key for the session to your value
-     */
-    //'session_key' => null
-    
-    /**
      * Put in the IP addresses of allowed hosts here
      */
     //'allowed_hosts' => array('127.0.0.1')
     
-    'test' => array(
-        'foo' => 'bar'
+    /**
+     * Session management settings
+     */
+    'session' => array(
+        /**
+         * Turn on/off session locking. Locking binds the session to the user's
+         * IP address and User-Agent combo to help prevent session fixation & guessing
+         */
+        'lock' => false,
+
+        /**
+        * Use this to set the sessions directory
+        */
+        'path' => '/tmp',
+
+        /**
+        * Use this to set the cipher key for the session to your value
+        */
+        'key'  => null
     )
 );
