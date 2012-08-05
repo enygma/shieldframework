@@ -137,7 +137,7 @@ class Input extends Base
      */
     public function getAll($type)
     {
-        $type = '_'.strtolower($type);
+        $type = strtolower($type);
         return (isset($this->$type)) ? $this->$type : null;
     }
 
