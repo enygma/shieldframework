@@ -16,6 +16,10 @@ class View extends Base
      */
     private $_viewDir  = null;
 
+    private $contentType = 'text/html';
+
+    private $charset = 'UTF-8';
+
     /**
      * Template object instance
      * @var object
@@ -92,6 +96,46 @@ class View extends Base
     }
 
     /**
+     * Set the Content-Type for the View response
+     * 
+     * @param string $type Content-Type
+     */
+    public function setContentType($type)
+    {
+        $this->contentType = $type;
+    }
+
+    /**
+     * Get the current Content-Type value
+     * 
+     * @return string Content-Type value
+     */
+    public function getContentType()
+    {
+        return $this->contentType;
+    }
+
+    /**
+     * Set the Character Set for the response
+     * 
+     * @param string $charset Character set type
+     */
+    public function setCharset($charset)
+    {
+        $this->charset = $charset;
+    }
+
+    /**
+     * Get the current Character Set value
+     * 
+     * @return string Current Character Set
+     */
+    public function getCharset()
+    {
+        return $this->charset;
+    }
+
+    /**
      * Get the complete list of View values
      * 
      * @return array List of values (array)
@@ -110,6 +154,11 @@ class View extends Base
      */
     public function render($content)
     {
+        $charset     = $this->getCharset();
+        $contentType = $this->getContentType();
+
+        header('Content-Type: '.$contentType.'; charset='.$charset);
+
         foreach ($this->getValues() as $index => $value) {
             $content = str_replace('['.$index.']', $value, $content);
         }
