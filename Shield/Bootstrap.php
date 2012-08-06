@@ -26,6 +26,9 @@ class Bootstrap extends Base
         error_reporting(-1);
         ini_set('display_errors', 1);
         ini_set('session.save_handler', 'files');
+
+        // render with the UTF-8 charset
+        header('Content-Type: text/html; charset=utf-8');
     }
 
     private function _initObjects(Di &$di)
