@@ -21,14 +21,20 @@ class Bootstrap extends Base
         }
     }
 
-    private function _initEnvConfig()
+    private function _initEnvConfig(Di &$di)
     {
         error_reporting(-1);
         ini_set('display_errors', 1);
         ini_set('session.save_handler', 'files');
 
+        $contentType = $di->get('Config')->get('view.content-type');
+        $contentType = ($contentType == null) ? 'text/html' : $contentType;
+
+        $charset = $di->get('Config')->get('view.charset');
+        $charset = ($charset == null) ? 'utf-8' : $charset;
+
         // render with the UTF-8 charset
-        header('Content-Type: text/html; charset=utf-8');
+        header('Content-Type: '.$contentType.'; charset='.$charset);
     }
 
     private function _initObjects(Di &$di)

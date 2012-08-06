@@ -36,4 +36,12 @@ return array(
      * Force the site to run under HTTPS (will try to redirect if HTTP)
      */
     'force_https' => false
+
+    /**
+     * View options
+     */
+    'view' => array(
+        'charset' => 'utf-8',
+        'content-type' => 'text/html'
+    )
 );
