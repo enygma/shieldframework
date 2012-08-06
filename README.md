@@ -94,7 +94,7 @@ back to the user as well, so you can access `$app->di` and use it to manage your
 
 Regular Expression Routing
 -----------------
-Besides the ability for Shield to match exact routes (like "/foo"), there's also a feature included allowing 
+Besides the ability for Shield to match exact routes (like `/foo`), there's also a feature included allowing 
 you use regular expresions in your routing. For example:
 
 ```php
@@ -109,9 +109,24 @@ $app->get('/foo([0-9]+)', function($matches) {
 ```
 
 Shield will try to match exact routes first, but then fall back on the regex routing checks. In th eabove example
-we're matching a route like "/foo123". You'll notice that the first argument for the method is the routing matches as 
-pulled from the [preg_match](http://php.net/preg_match) PHP method. You can use whaever PREG-based expression you
-want to use and have the values returned to you in the `$matches` value.
+we're matching a route like `/foo123`. You'll notice that the first argument for the method is the routing matches as 
+pulled from the [preg_match](http://php.net/preg_match) PHP method. You can use whaever preg-based expression you
+want to use and have the values returned to you in the `$matches` value. So:
+
+```
+<?php
+include_once '../Shield/Shield.php';
+$app = new Shield\Shield();
+
+$app>get('/foo([0-9]+)', function($matches){
+    print_r($matches);
+});
+```
+
+You would get `Array ( [0] => /foo123 [1] => 123 )` in the `$matches` variable.
+
+*NOTE:* DO NOT directly use the values from this array - there is currently no filtering on these values
+so there is potential for exploitation.
 
 Documentation
 -----------------
