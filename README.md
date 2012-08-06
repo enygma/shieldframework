@@ -92,6 +92,27 @@ There's also one other thing that could help in more complex development - the D
 makes heavy use of a Dependency Injection Container (DIC) to work with its resources. This is exposed 
 back to the user as well, so you can access `$app->di` and use it to manage your own object instances as well.
 
+Regular Expression Routing
+-----------------
+Besides the ability for Shield to match exact routes (like "/foo"), there's also a feature included allowing 
+you use regular expresions in your routing. For example:
+
+```php
+<?php
+include_once '../Shield/Shield.php';
+$app = new Shield\Shield();
+
+$app->get('/foo([0-9]+)', function($matches) {
+    print_r($matches);
+});
+
+```
+
+Shield will try to match exact routes first, but then fall back on the regex routing checks. In th eabove example
+we're matching a route like "/foo123". You'll notice that the first argument for the method is the routing matches as 
+pulled from the [preg_match](http://php.net/preg_match) PHP method. You can use whaever PREG-based expression you
+want to use and have the values returned to you in the `$matches` value.
+
 Documentation
 -----------------
 ### Shield
