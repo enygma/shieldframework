@@ -67,9 +67,16 @@ class Shield
      */
     public function __construct()
     {
+        // set the APPPATH constant
+        define('APPPATH',__DIR__.'../app');
+
         // force all error messages
         spl_autoload_register(array($this, '_load'));
         set_error_handler(array($this, '_errorHandler'));
+        set_exception_handler(array($this, '_exceptionHandler'));
+
+        // include our exceptions
+        include_once 'Exception.php';
 
         // make our DI container
         $this->di = new Di();
@@ -194,8 +201,8 @@ class Shield
                     // return a 404 header
                     header('HTTP/1.0 404 Not Found');
 
-                    $this->di->get('Log')->log('NO ROUTE MATCH ['.strtoupper($method).']: '.$uri);
                     $this->throwError('No route match for "'.$uri.'"');
+                    throw new RoutingException('NO ROUTE MATCH ['.strtoupper($method).']: '.$uri);
                 }
             }
         }
@@ -240,5 +247,18 @@ class Shield
         echo '<b>'.$errString.':</b> '.$errstr.'<br/>';
 
         error_log($errString.' ['.$errno.']: '.$errstr.' in '.$errfile.' on line '.$errline);
+    }
+
+    /**
+     * Custom exception handler
+     * 
+     * @param Exception 
+     * 
+     * @return null
+     */
+    public function _exceptionHandler($exception)
+    {
+        $message = get_class($exception).' - '.$exception->getMessage().' [code: '.$exception->getCode().']';
+        $this->di->get('Log')->log($message);
     }
 }
