@@ -176,25 +176,27 @@ class Shield
         $method = strtolower($requestMethod);
 
         if (isset($this->routes[$method][$uri])) {
-            $this->routeMatch($method,$uri,$uri);
+            $this->routeMatch($method, $uri, $uri);
             
         } else {
             $found = false;
 
-            // loop through our routes and see if there's a regex match
-            foreach ($this->routes[$method] as $route => $handler) {
-                if (preg_match('#^'.$route.'$#', $uri, $matches) === 1 && $found == false) {
-                    $found = true;
-                    $this->routeMatch($method,$route,$matches);
+            if (isset($this->routes[$method])) {
+                // loop through our routes and see if there's a regex match
+                foreach ($this->routes[$method] as $route => $handler) {
+                    if (preg_match('#^'.$route.'$#', $uri, $matches) === 1 && $found == false) {
+                        $found = true;
+                        $this->routeMatch($method, $route, $matches);
+                    }
                 }
-            }
 
-            if ($found == false) {
-                // return a 404 header
-                header('HTTP/1.0 404 Not Found');
+                if ($found == false) {
+                    // return a 404 header
+                    header('HTTP/1.0 404 Not Found');
 
-                $this->di->get('Log')->log('NO ROUTE MATCH ['.strtoupper($method).']: '.$uri);
-                $this->throwError('No route match for "'.$uri.'"');
+                    $this->di->get('Log')->log('NO ROUTE MATCH ['.strtoupper($method).']: '.$uri);
+                    $this->throwError('No route match for "'.$uri.'"');
+                }
             }
         }
     }
