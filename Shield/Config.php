@@ -87,9 +87,13 @@ class Config extends Base
      * 
      * @return array Config container (options)
      */
-    public function getConfig()
+    public function getConfig($context=null)
     {
-        return $this->config;
+        if ($context !== null && isset($this->config[$context])) {
+            return $this->config[$context];
+        } else {
+            return $this->config;
+        }
     }
 
     /**
@@ -130,5 +134,48 @@ class Config extends Base
     {
         $this->config[$context][$name] = $value;
         return $this;
+    }
+
+    /**
+     * Use the given config and make updates to the context's settings
+     * 
+     * @param array  $config  Array of configuration settings
+     * @param string $context Context for the config options
+     * 
+     * @return null
+     */
+    public function update($config,$context='general')
+    {
+        foreach ($config as $option => $value) {
+            if (strstr($option, '.') !== false) {
+                $opt = explode('.',$option);
+
+            } else {
+                $opt = array($option);
+            }
+            $this->recurseConfig($opt,$value,$this->config[$context]);
+        }
+    }
+
+    /**
+     * Recurse through the configuration to apply the new values
+     * 
+     * @param array $opt    New config option path
+     * @param mixed $value  New value to set
+     * @param array $config Current configuration options
+     * 
+     * @return null
+     */
+    private function recurseConfig($opt,$value,&$config)
+    {
+        $first = array_shift($opt);
+        if (isset($config[$first])) {
+            if (count($opt) == 0) {
+                $config[$first] = $value;
+            } else  {
+                $this->recurseConfig($opt,$value,$config[$first]);
+            }
+        }
+
     }
 }

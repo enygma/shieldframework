@@ -131,6 +131,11 @@ class Shield
         $func = strtolower($func);
         $path = strtolower($args[0]);
 
+        if (isset($args[2])) {
+            // we've been given a route-specific config, set it up!
+            $this->di->get('Config')->setConfig($args[2],'route::'.$path);
+        }
+
         if (isset($args[1])) {
             $this->routes[$func][$path] = $args[1];
             $this->di->Log->log('SETTING PATH ['.strtoupper($func).']: '.$path);    
@@ -185,6 +190,7 @@ class Shield
         $method = strtolower($requestMethod);
 
         if (isset($this->routes[$method][$uri])) {
+
             $this->routeMatch($method, $uri, $uri);
             
         } else {
@@ -220,12 +226,18 @@ class Shield
      */
     private function routeMatch($method,$uri,$matches=null)
     {
+        // given our URI, see if we have a match in our Config & update!
+        $config = $this->di->get('Config')->getConfig('route::'.$uri);
+        if ($config !== null) {
+            $this->di->get('Config')->update($config);
+        }
 
         // route match!
         $this->di->get('Log')->log('ROUTE MATCH ['.strtoupper($method).']: '.$uri);
         $routeClosure = $this->routes[$method][$uri]($matches);
 
-        echo $this->view->render($routeClosure);
+        $content = $this->view->render($routeClosure);
+        echo $content;
     }
 
     /**
