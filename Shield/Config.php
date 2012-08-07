@@ -34,14 +34,17 @@ class Config extends Base
             throw new \Exception('Cannot access configuration file!');
         }
 
-        // be sure it's a .php file
-        $info = pathinfo($path);
-        if ($info['extension'] !== 'php') {
-            throw new \Exception('File must be a .php file!');
-        } else {
-            // we're good - load it!
-            $data = include $path;
-            $this->setConfig($data);
+        if ($path !== false) {
+            // be sure it's a .php file
+            $info = pathinfo($path);
+
+            if ($info['extension'] !== 'php') {
+                throw new \Exception('File must be a .php file!');
+            } else {
+                // we're good - load it!
+                $data = include $path;
+                $this->setConfig($data);
+            }
         }   
     }
 
