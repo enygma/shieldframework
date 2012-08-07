@@ -68,7 +68,9 @@ class Shield
     public function __construct()
     {
         // set the APPPATH constant
-        define('APPPATH',__DIR__.'../app');
+        if (!defined('APPPATH')) {
+            define('APPPATH',__DIR__.'../app');
+        }
 
         // force all error messages
         spl_autoload_register(array($this, '_load'));
