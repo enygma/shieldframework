@@ -112,7 +112,7 @@ class View extends Base
      */
     public function getContentType()
     {
-        $cfg = $this->di->get('Config')->get('view.content-type');
+        $cfg = $this->di->get('Config', true)->get('view.content-type');
         return ($cfg !== null) ? $cfg : $this->contentType;
     }
 
@@ -127,14 +127,14 @@ class View extends Base
     }
 
     /**
-     * Get the current Character Set value
+     * Get the current Character Set valuse
      * 
      * @return string Current Character Set
      */
     public function getCharset()
     {
         // see if its in the config first
-        $cfg = $this->di->get('Config')->get('view.charset');
+        $cfg = $this->di->get('Config', true)->get('view.charset');
         return ($cfg !== null) ? $cfg : $this->charset;
     }
 
