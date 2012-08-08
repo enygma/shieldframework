@@ -128,6 +128,24 @@ You would get `Array ( [0] => /foo123 [1] => 123 )` in the `$matches` variable.
 *NOTE:* DO NOT directly use the values from this array - there is currently no filtering on these values
 so there is potential for exploitation.
 
+Bound Configuration
+-----------------
+You can also specify some configuration options linked directly to the route/closure combination. Here's an example:
+
+```
+<?php
+include_once '../Shield/Shield.php';
+$app = new Shield\Shield();
+
+$app->get('/xml', function() use ($app){
+    return $app->view->render('<test>this is xml</test>');
+}, array(
+    'view.content-type' => 'text/xml'
+));
+```
+
+In the above example, we're overriding the `view.content-type` setting, but only for the `/` route, not everything. This gives us a bit more control over the application, making it easier to customize the request handling. Note this uses the dot notation to specify the value (the key). Most configuration options should be available for reconfiguration via this method.
+
 Documentation
 -----------------
 ### Shield
