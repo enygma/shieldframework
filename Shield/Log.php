@@ -2,8 +2,10 @@
 
 namespace Shield;
 
-class Log extends Base
+class Log
 {
+    private $config = null;
+
     /**
      * Path to the log file
      * @var string
@@ -58,10 +60,10 @@ class Log extends Base
      * 
      * @return null
      */
-    public function __construct(Di $di)
+    public function __construct(\Shield\Config $config)
     {
         // check config for a path or set a default logging path
-        $logPath = $di->get('Config')->get('log_path');
+        $logPath = $config->get('log_path');
 
         if ($logPath !== null && is_dir(realpath($logPath)) && is_writable($logPath)) {
             $this->setLogPath(realpath($logPath));
