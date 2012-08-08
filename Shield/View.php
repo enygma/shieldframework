@@ -16,8 +16,16 @@ class View extends Base
      */
     private $_viewDir  = null;
 
+    /**
+     * Default Content-Type
+     * @var string
+     */
     private $contentType = 'text/html';
 
+    /**
+     * Default Character Set
+     * @var string
+     */
     private $charset = 'UTF-8';
 
     /**
@@ -27,16 +35,24 @@ class View extends Base
     public $template = null;
 
     /**
+     * A \Shield\Config object
+     * @var object
+     */
+    private $config = null;
+
+    /**
      * Init the object and create a Template instance
      * 
      * @param object $di DI container
      */
-    public function __construct($di)
+    public function __construct(\Shield\Config $config, \Shield\Template $template)
     {
-        $this->template = new Template($di);
+        //$this->template = new Template($di);
+        $this->config = $config;
+        $this->template = $template;
         $this->setViewDir();
 
-        parent::__construct($di);
+        //parent::__construct($di);
     }
 
     /**
@@ -112,7 +128,8 @@ class View extends Base
      */
     public function getContentType()
     {
-        $cfg = $this->di->get('Config', true)->get('view.content-type');
+        //$cfg = $this->di->get('Config', true)->get('view.content-type');
+        $cfg = $this->config->get('view.content-type');
         return ($cfg !== null) ? $cfg : $this->contentType;
     }
 
@@ -134,7 +151,8 @@ class View extends Base
     public function getCharset()
     {
         // see if its in the config first
-        $cfg = $this->di->get('Config', true)->get('view.charset');
+        //$cfg = $this->di->get('Config', true)->get('view.charset');
+        $cfg = $this->config->get('view.charset');
         return ($cfg !== null) ? $cfg : $this->charset;
     }
 

@@ -95,8 +95,10 @@ class Shield
 
         $bs = new Bootstrap($this->di);
 
+        $template = new Template($config);
+
         // set up the view and logger objects
-        $this->view = new View($this->di);
+        $this->view = new View($config,$template);
         $this->log  = new Log($config);
 
         $this->di->register(array($this->view, $this->log));

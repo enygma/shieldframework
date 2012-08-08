@@ -4,6 +4,13 @@ namespace Shield;
 
 class Template extends Base
 {
+    private $config = null;
+
+    public function __construct(\Shield\Config $config)
+    {
+        $this->config = $config;
+    }
+
     /**
      * Template properties (values)
      * @var array
