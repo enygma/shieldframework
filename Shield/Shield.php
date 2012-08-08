@@ -97,7 +97,7 @@ class Shield
 
         // set up the view and logger objects
         $this->view = new View($this->di);
-        $this->log  = new Log($this->di);
+        $this->log  = new Log($config);
 
         $this->di->register(array($this->view, $this->log));
     }
