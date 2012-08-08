@@ -69,10 +69,10 @@ class Shield
     {
         // set the APPPATH constant
         if (!defined('APPPATH')) {
-            define('APPPATH',__DIR__.'../app');
+            define('APPPATH', __DIR__.'../app');
         }
 
-        // force all error messages
+        // some global config
         spl_autoload_register(array($this, '_load'));
         set_error_handler(array($this, '_errorHandler'));
         set_exception_handler(array($this, '_exceptionHandler'));
@@ -80,6 +80,11 @@ class Shield
         // include our exceptions
         include_once 'Exception.php';
 
+        $this->init();
+    }
+
+    private function init()
+    {
         // make our DI container
         $this->di = new Di();
 
@@ -133,7 +138,7 @@ class Shield
 
         if (isset($args[2])) {
             // we've been given a route-specific config, set it up!
-            $this->di->get('Config')->setConfig($args[2],'route::'.$path);
+            $this->di->get('Config')->setConfig($args[2], 'route::'.$path);
         }
 
         if (isset($args[1])) {
