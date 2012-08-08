@@ -2,7 +2,7 @@
 
 namespace Shield;
 
-class Log
+class Log extends Base
 {
     private $config = null;
 
