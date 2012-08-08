@@ -6,16 +6,21 @@ class ViewTest extends \PHPUnit_Framework_TestCase
 {
     private $_view = null;
     private $_di   = null;
+    private $_config = null;
     
     public function setUp()
     {
         $this->_di   = new Di();
-        $this->_view = new View($this->_di);
+        $this->_config = new Config($this->_di);
+        $template = new Template($this->_config);
+
+        $this->_view = new View($this->_config, $template);
     }
     public function tearDown()
     {
         $this->_di   = null;
         $this->_view = null;
+        $this->_config = null;
     }
 
     /**

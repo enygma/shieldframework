@@ -4,11 +4,13 @@ namespace Shield;
 
 class Template extends Base
 {
-    private $config = null;
+    private $config      = null;
+    private $templateDir = null;
 
     public function __construct(\Shield\Config $config)
     {
         $this->config = $config;
+        $this->setTemplateDir();
     }
 
     /**
@@ -44,6 +46,33 @@ class Template extends Base
     }
 
     /**
+     * Get the current templates directory
+     * 
+     * @return string Full path to templates directory
+     */
+    public function getTemplateDir()
+    {
+        return $this->templateDir;
+    }
+
+    /**
+     * Set the directory where the templates live
+     * 
+     * @param string $dir Directory path
+     * 
+     * @return null
+     */
+    public function setTemplateDir($dir=null)
+    {
+        // see if the path is valid
+        $templatePath = ($dir !== null) ? $dir : __DIR__.'/../app/views';
+
+        if (realpath($templatePath) !== false) {
+            $this->templateDir = realpath($templatePath);
+        }
+    }
+
+    /**
      * Render the template - either using a file (views/) or as a string
      *     Checks to see if the $template references a file first
      * 
@@ -54,8 +83,7 @@ class Template extends Base
     public function render($template)
     {
         // first see if what we've been given is a file
-        $templateFile = $this->di->get('View')->getViewDir().
-            '/'.$template.'.php';
+        $templateFile = $this->getTemplateDir().'/'.$template.'.php';
 
         if (is_file($templateFile)) {
             extract($this->_properties);

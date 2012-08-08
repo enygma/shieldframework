@@ -6,18 +6,21 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
 {
     private $_template = null;
     private $_di       = null;
+    private $_config   = null;
     
     public function setUp()
     {
         $this->_di = new Di();
-        $this->_di->register(new View($this->_di));
+        $this->_config = new Config($this->_di);
+        $this->_template = new Template($this->_config);
 
-        $this->_template = new Template($this->_di);
+        $this->_di->register(new View($this->_config, $this->_template));
     }
     public function tearDown()
     {
         $this->_di = null;
         $this->_template = null;
+        $this->_config = null;
     }
 
     /**
