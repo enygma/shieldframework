@@ -70,6 +70,7 @@ class Template extends Base
         if (realpath($templatePath) !== false) {
             $this->templateDir = realpath($templatePath);
         }
+        return $this;
     }
 
     /**

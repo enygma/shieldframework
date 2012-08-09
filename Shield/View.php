@@ -68,6 +68,7 @@ class View extends Base
         if (realpath($viewPath) !== false) {
             $this->_viewDir = realpath($viewPath);
         }
+        return $this;
     }
 
     /**
@@ -91,12 +92,18 @@ class View extends Base
      */
     public function set($index, $value, $escape=true)
     {
-        if ($escape === true) {
-            // escape all values
-            $value = htmlspecialchars($value, ENT_QUOTES);
+        if (!is_array($index)) {
+            $index = array($index => $value);
         }
-
-        $this->values[$index] = $value;
+        foreach ($index as $i => $value) {
+            if ($escape === true) {
+                // escape all values
+                $value = htmlspecialchars($value, ENT_QUOTES);
+            }
+            $this->values[$i] = $value;    
+        }
+        
+        return $this;
     }
 
     /**
@@ -119,6 +126,7 @@ class View extends Base
     public function setContentType($type)
     {
         $this->contentType = $type;
+        return $this;
     }
 
     /**
@@ -141,6 +149,7 @@ class View extends Base
     public function setCharset($charset)
     {
         $this->charset = $charset;
+        return $this;
     }
 
     /**
