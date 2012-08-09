@@ -11,8 +11,9 @@ class ShieldException extends \Exception
     public function __construct($message, $code = 0, Exception $previous = null)
     {
         $di  = new Di();
-        $di->register(new Config($di));
-        $log = new Log($di);
+        $config = new Config($di);
+        $di->register($config);
+        $log = new Log($config);
 
         $log->log($message);
 
