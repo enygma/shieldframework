@@ -37,7 +37,7 @@ class Filter extends Base
 
         foreach ($name as $n => $type) {
             if ($type == null) { continue; }
-            
+
             if (isset($this->filters[$n])) {
                 $this->filters[$n][] = $type;
             } else {
@@ -77,7 +77,11 @@ class Filter extends Base
         $filters = $this->get($name);
 
         if (count($filters) == 0) {
-            $filters = array('htmlentities');
+            if ($value == null && is_string($value)) {
+                $charset  = Config::get('view.charset');
+                $encoding = ($charset !== null) ? $charset : 'UTF-8';
+                $value    = htmlentities($value, ENT_QUOTES, $encoding, false);
+            }
         }
         foreach ($filters as $filter) {
             if ($filter instanceof \Closure) {
@@ -115,7 +119,7 @@ class Filter extends Base
      */
     private function filterStriptags($value)
     {
-        return strip_tags($value);
+        return filter_var($value, FILTER_SANITIZE_STRING);
     }
 
     /**
