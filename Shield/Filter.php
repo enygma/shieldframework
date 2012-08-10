@@ -11,6 +11,17 @@ class Filter extends Base
     private $filters = array();
 
     /**
+     * Config instance
+     * @var object
+     */
+    private $config  = null;
+
+    public function __construct(\Shield\Config $config)
+    {
+        $this->config = $config;
+    }
+
+    /**
      * Add a new filter
      * 
      * @param string $name Name of the field
@@ -45,12 +56,20 @@ class Filter extends Base
         return $func;
     }
 
+    /**
+     * Filter the given property (name) with the given value
+     * 
+     * @param string $name  Name of property
+     * @param mixed  $value Value to filter
+     * 
+     * @return mixed $value Filtered value
+     */
     public function filter($name, $value)
     {
         $filters = $this->get($name);
 
         if (count($filters) == 0) {
-            $filters = array('striptags');
+            $filters = array('htmlentities');
         }
         foreach ($filters as $filter) {
             if ($filter instanceof \Closure) {
@@ -89,6 +108,18 @@ class Filter extends Base
     private function filterStriptags($value)
     {
         return strip_tags($value);
+    }
+
+    /**
+     * Apply the htmlentities method on the value
+     * 
+     * @param string $value Value to filter
+     * 
+     * @return string Filtered result
+     */
+    private function filterHtmlentities($value)
+    {
+        return htmlentities($value);
     }
 
     /**
