@@ -40,6 +40,8 @@ class Input extends Base
      */
     private $session  = array();
 
+    private $filter   = null;
+
     /**
      * Intiitalize the object and extract the superglobals
      * 
@@ -47,10 +49,10 @@ class Input extends Base
      * 
      * @return null
      */
-    public function __construct(Di $di)
+    public function __construct(\Shield\Filter $filter)
     {
+        $this->filter = $filter;
         $this->load();
-        parent::__construct($di);
     }
 
     /**
@@ -89,14 +91,11 @@ class Input extends Base
      */
     private function filterInput($name, $value)
     {
-        // look for its filter(s)
-        $filter = $this->di->get('Filter');
-
-        if ($filter == null) {
+        if ($this->filter == null) {
             throw new \Exception('No filter object defined!');
         }
 
-        $val = $filter->filter($name, $value);
+        $val = $this->filter->filter($name, $value);
         return ($val !== false && $val !== null) ? $val : null;
     }
 

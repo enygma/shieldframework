@@ -29,7 +29,7 @@ class Session extends Base
      * 
      * @return null
      */
-    public function __construct(Di $di)
+    public function __construct()
     {
         session_set_save_handler(
             array($this, "open"),
@@ -40,15 +40,15 @@ class Session extends Base
             array($this, "gc")
         );
 
-        $sessionKey = $di->get('Config')->get('session.key');
+        $sessionKey = Config::get('session.key');
         if ($sessionKey !== null) {
             $this->key = $sessionKey;
         }
-        $sessionPath = $di->get('Config')->get('session.path');
+        $sessionPath = Config::get('session.path');
         $this->savePathRoot = ($sessionPath == null)
             ? ini_get('session.save_path') : $sessionPath;
 
-        parent::__construct($di);
+        //parent::__construct($di);
     }
 
     /**
@@ -58,7 +58,8 @@ class Session extends Base
      */
     public function lock()
     {
-        $this->di->get('Log', true)->log('Session locking in effect');
+        $log = new Log();
+        $log->log('Session locking in effect');
 
         $sip = (isset($_SESSION['sIP'])) ? $_SESSION['sIP'] : null;
         $sua = (isset($_SESSION['sUA'])) ? $_SESSION['sUA'] : null;
@@ -70,9 +71,7 @@ class Session extends Base
         } elseif ($sip !== null && $sua !== null) {
             // see if we have a match, if not refresh()
             if ($sip !== $_SERVER['REMOTE_ADDR'] || $sua !== $_SERVER['HTTP_USER_AGENT']) {
-                $this->di->get('Log', true)->log(
-                    'SECURITY ALERT: Session lock override attempt!'
-                );
+                $log->log('SECURITY ALERT: Session lock override attempt!');
                 $this->refresh();
                 return false;
             }

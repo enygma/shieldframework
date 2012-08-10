@@ -4,17 +4,14 @@ namespace Shield;
 
 class Template extends Base
 {
-    private $config      = null;
     private $templateDir = null;
     private $filter      = null;
     private $charset     = 'UTF-8';
     private $contentType = 'text/html';
 
-    public function __construct(\Shield\Config $config, \Shield\Filter $filter)
+    public function __construct(\Shield\Filter $filter)
     {
-        $this->config = $config;
         $this->filter = $filter;
-
         $this->setTemplateDir();
     }
 
@@ -142,7 +139,8 @@ class Template extends Base
      */
     public function getContentType()
     {
-        return $this->contentType;
+        $contentType = Config::get('view.content-type');
+        return ($contentType !== null) ? $contentType : $this->contentType;
     }
 
     /**
@@ -165,7 +163,8 @@ class Template extends Base
      */
     public function getCharset()
     {
-        return $this->charset;
+        $charset = Config::get('view.charset');
+        return ($charset !== null) ? $charset : $this->charset;
     }
 
     /**

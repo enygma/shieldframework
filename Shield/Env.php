@@ -4,6 +4,13 @@ namespace Shield;
 
 class Env extends Base
 {
+    private $input  = null;
+
+    public function __construct(\Shield\Input $input)
+    {
+        $this->input  = $input;
+    }
+
     /**
      * Execute the checks for various environment issues
      * 
@@ -34,16 +41,13 @@ class Env extends Base
      */
     private function checkHttps()
     {
-        $config = $this->di->get('Config');
-        $input  = $this->di->get('Input');
-
         // see if we need to be on HTTPS
-        $httpsCfg = $config->get('force_https');
-        $httpsSet = $input->server('HTTPS');
+        $httpsCfg = Config::get('force_https');
+        $httpsSet = $this->input->server('HTTPS');
 
         if ($httpsCfg == true && empty($httpsSet)) {
-            $host    = $input->server('HTTP_HOST');
-            $request = $input->server('REQUEST_URI');
+            $host    = $this->input->server('HTTP_HOST');
+            $request = $this->input->server('REQUEST_URI');
 
             $redirect= "https://".$host.$request;
             header("Location: $redirect");

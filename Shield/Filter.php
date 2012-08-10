@@ -16,9 +16,9 @@ class Filter extends Base
      */
     private $config  = null;
 
-    public function __construct(\Shield\Config $config)
+    public function __construct()
     {
-        $this->config = $config;
+        //nothing to see...
     }
 
     /**

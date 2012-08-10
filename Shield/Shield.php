@@ -44,18 +44,6 @@ class Shield
     );
 
     /**
-     * Dependency Injection container
-     * @var object
-     */
-    public $di        = null;
-
-    /**
-     * View object instance (Shield\View)
-     * @var object
-     */
-    public $view      = null;
-
-    /**
      * Init the object and its dependencies:
      * 
      *     Filter, Input, Session, Config
@@ -85,44 +73,19 @@ class Shield
 
     private function init()
     {
-        // make our DI container
-        $this->di = new Di();
-
         // init the config and read it in (if it exists)
-        $config = new Config($this->di);
-        $config->load();
-        $this->di->register($config);
+        //$this->config = new Config();
+        //$this->config->load();
+        Config::load();
 
-        $bs = new Bootstrap($this->di);
+        $bs = new Bootstrap();
 
-        $this->template = new Template($config);
+        $filter = new Filter();
+        $this->template = new Template($filter);
 
         // set up the view and logger objects
-        $this->view = new View($config, $this->template);
-        $this->log  = new Log($config);
-
-        $this->di->register(array($this->view, $this->log));
-    }
-
-    /**
-     * Handle unknown property calls, looks into the DI
-     *     container to see if it exists (by lowercase class name)
-     * 
-     * @param string $name Name of property called
-     * 
-     * @return mixed Either the object from DI or null
-     */
-    public function __get($name)
-    {
-        // it's not a property, let's check in the DI container
-        $className = ucwords(strtolower($name));
-        $obj = $this->di->get($className);
-
-        if ($obj == null) {
-            $this->throwError('Property could not be found!');
-        }
-
-        return $obj;
+        $this->log   = new Log();
+        $this->input = new Input($filter);
     }
 
     /**
@@ -140,15 +103,15 @@ class Shield
 
         if (isset($args[2])) {
             // we've been given a route-specific config, set it up!
-            $this->di->get('Config')->setConfig($args[2], 'route::'.$path);
+            Config::setConfig($args[2], 'route::'.$path);
         }
 
         if (isset($args[1])) {
             $this->routes[$func][$path] = $args[1];
-            $this->di->Log->log('SETTING PATH ['.strtoupper($func).']: '.$path);    
+            $this->log->log('SETTING PATH ['.strtoupper($func).']: '.$path);    
         } else {
             $this->throwError('No path to set for : '.strtoupper($func));
-            $this->di->Log->log('NO PATH TO SET ['.strtoupper($func).']: '.$path);    
+            $this->log->log('NO PATH TO SET ['.strtoupper($func).']: '.$path);    
         }
     }
 
@@ -177,13 +140,13 @@ class Shield
      */
     public function run()
     {
-        $requestMethod = $this->di->get('Input')->server('REQUEST_METHOD');
-        $queryString   = $this->di->get('Input')->server('QUERY_STRING');
-        $requestUri    = $this->di->get('Input')->server('REQUEST_URI');
-        $remoteAddr    = $this->di->get('Input')->server('REMOTE_ADDR');
+        $requestMethod = $this->input->server('REQUEST_METHOD');
+        $queryString   = $this->input->server('QUERY_STRING');
+        $requestUri    = $this->input->server('REQUEST_URI');
+        $remoteAddr    = $this->input->server('REMOTE_ADDR');
 
         // if we have the config option, see if they're allowed
-        $allowedHosts = $this->di->get('Config')->get('allowed_hosts');
+        $allowedHosts = Config::get('allowed_hosts');
         if (!empty($allowedHosts)) {
             if (!in_array($remoteAddr, $allowedHosts)) {
                 // not allowed, fail!
@@ -234,16 +197,16 @@ class Shield
     private function routeMatch($method,$uri,$matches=null)
     {
         // given our URI, see if we have a match in our Config & update!
-        $config = $this->di->get('Config')->getConfig('route::'.$uri);
+        $config = Config::getConfig('route::'.$uri);
         if ($config !== null) {
-            $this->di->get('Config')->update($config);
+            Config::update($config);
         }
 
         // route match!
-        $this->di->get('Log')->log('ROUTE MATCH ['.strtoupper($method).']: '.$uri);
+        $this->log->log('ROUTE MATCH ['.strtoupper($method).']: '.$uri);
         $routeClosure = $this->routes[$method][$uri]($matches);
 
-        $content = $this->view->render($routeClosure);
+        $content = $this->template->render($routeClosure);
         echo $content;
     }
 
@@ -280,6 +243,6 @@ class Shield
     public function _exceptionHandler($exception)
     {
         $message = get_class($exception).' - '.$exception->getMessage().' [code: '.$exception->getCode().']';
-        $this->di->get('Log')->log($message);
+        $this->log->log($message);
     }
 }

@@ -8,13 +8,18 @@ class Config extends Base
      * Configuration options container
      * @var array
      */
-    private $config = array('general'=>array());
+    private static $config = array('general'=>array());
 
     /**
      * Configuration file name (default)
      * @var string
      */
-    private $configFile = 'config.php';
+    private static $configFile = 'config.php';
+
+    public function __construct()
+    {
+        //nothing to see...
+    }
 
     /**
      * Load the configuration into the container (from a file)
@@ -24,10 +29,10 @@ class Config extends Base
      * @throws \Exception If no config file or it's not a .php file
      * @return null
      */
-    public function load($path=null)
+    public static function load($path=null)
     {
         if ($path == null) {
-            $path = './'.$this->configFile;
+            $path = './'.self::$configFile;
         }
         $path = realpath($path);
         if (file_exists($path) && !is_readable($path)) {
@@ -43,7 +48,7 @@ class Config extends Base
             } else {
                 // we're good - load it!
                 $data = include $path;
-                $this->setConfig($data);
+                self::setConfig($data);
             }
         }   
     }
@@ -53,10 +58,9 @@ class Config extends Base
      * 
      * @param array $config Array of configuration options
      */
-    public function setConfig($config,$context='general')
+    public static function setConfig($config,$context='general')
     {
-        $this->config[$context] = $config;
-        return $this;
+        self::$config[$context] = $config;
     }
 
     /**
@@ -66,10 +70,9 @@ class Config extends Base
      * 
      * @return null
      */
-    public function setConfigFile($fileName)
+    public static function setConfigFile($fileName)
     {
-        $this->configFile = $fileName;
-        return $this;
+        self::$configFile = $fileName;
     }
 
     /**
@@ -77,9 +80,9 @@ class Config extends Base
      * 
      * @return null
      */
-    public function getConfigFile()
+    public static function getConfigFile()
     {
-        return $this->configFile;
+        return self::$configFile;
     }
 
     /**
@@ -87,12 +90,12 @@ class Config extends Base
      * 
      * @return array Config container (options)
      */
-    public function getConfig($context=null)
-    {
-        if ($context !== null && isset($this->config[$context])) {
-            return $this->config[$context];
+    public static function getConfig($context=null)
+    {        
+        if ($context !== null && isset(self::$config[$context])) {
+            return self::$config[$context];
         } else {
-            return $this->config;
+            return self::$config;
         }
     }
 
@@ -103,12 +106,12 @@ class Config extends Base
      * 
      * @return mixed Either a string value or an array
      */
-    public function get($name,$context='general')
+    public static function get($name,$context='general')
     {
         if (strstr($name, '.') !== false) {
             // an array, split it and try to find it
             $parts   = explode('.',$name);
-            $current = $this->config[$context];
+            $current = self::$config[$context];
 
             foreach ($parts as $p) {
                 if (!isset($current[$p])) { return null; }
@@ -117,8 +120,8 @@ class Config extends Base
             return $current;
         } else {
             // just a string
-            return (isset($this->config[$context][$name])) 
-                ? $this->config[$context][$name] : null;
+            return (isset(self::$config[$context][$name])) 
+                ? self::$config[$context][$name] : null;
         }
     }
 
@@ -130,10 +133,9 @@ class Config extends Base
      * 
      * @return object Shield\Config
      */
-    public function set($name,$value,$context='general')
+    public static function set($name,$value,$context='general')
     {
-        $this->config[$context][$name] = $value;
-        return $this;
+        self::$config[$context][$name] = $value;
     }
 
     /**
@@ -144,16 +146,15 @@ class Config extends Base
      * 
      * @return null
      */
-    public function update($config,$context='general')
+    public static function update($config,$context='general')
     {
         foreach ($config as $option => $value) {
             if (strstr($option, '.') !== false) {
                 $opt = explode('.',$option);
-
             } else {
                 $opt = array($option);
             }
-            $this->recurseConfig($opt,$value,$this->config[$context]);
+            self::recurseConfig($opt,$value,self::$config[$context]);
         }
     }
 
@@ -166,14 +167,14 @@ class Config extends Base
      * 
      * @return null
      */
-    private function recurseConfig($opt,$value,&$config)
+    private static function recurseConfig($opt,$value,&$config)
     {
         $first = array_shift($opt);
         if (isset($config[$first])) {
             if (count($opt) == 0) {
                 $config[$first] = $value;
             } else  {
-                $this->recurseConfig($opt,$value,$config[$first]);
+                self::recurseConfig($opt,$value,$config[$first]);
             }
         }
 
