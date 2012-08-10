@@ -29,12 +29,20 @@ class Filter extends Base
      * 
      * @return null
      */
-    public function add($name, $type)
+    public function add($name, $type = null)
     {
-        if (isset($this->filters[$name])) {
-            $this->filters[$name][] = $type;
-        } else {
-            $this->filters[$name] = array($type);
+        if (!is_array($name)) {
+            $name = array($name => $type);
+        }
+
+        foreach ($name as $n => $type) {
+            if ($type == null) { continue; }
+            
+            if (isset($this->filters[$n])) {
+                $this->filters[$n][] = $type;
+            } else {
+                $this->filters[$n] = array($type);
+            }
         }
     }
 
