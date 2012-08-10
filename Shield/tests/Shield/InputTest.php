@@ -17,7 +17,8 @@ class InputTest extends \PHPUnit_Framework_TestCase
         global $_SERVER;
 
         $this->_di    = new Di();
-        $this->_input = new Input($this->_di);
+        $this->_input = new Input(new Filter());
+        //$this->_config = new Config($this->_di);
     }
     public function tearDown()
     {
@@ -42,11 +43,10 @@ class InputTest extends \PHPUnit_Framework_TestCase
         $validEmail = 'woo@test.com';
 
         // create and register a Filter instance
-        $filter = new Filter($this->_di);
+        $filter = new Filter();
         $filter->add('testVal','email');
-        $this->_di->register($filter);
 
-        $input = new Input($this->_di);
+        $input = new Input($filter);
         $input->set('get','testVal',$validEmail);
 
         $result = $input->get('testVal');
@@ -69,13 +69,12 @@ class InputTest extends \PHPUnit_Framework_TestCase
         $validEmail = 'woo@test.com';
 
         // create and register a Filter instance
-        $filter = new Filter($this->_di);
+        $filter = new Filter();
         $filter->add('testVal', function($value){
             return 'returned: '.$value;
         });
-        $this->_di->register($filter);
 
-        $input = new Input($this->_di);
+        $input = new Input($filter);
         $input->set('get','testVal',$validEmail);
 
         $result = $input->get('testVal');

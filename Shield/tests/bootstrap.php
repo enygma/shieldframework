@@ -7,8 +7,9 @@ function load($className)
     $path = __DIR__.'/../'.str_replace('Shield\\', '/', $className).'.php';
     if (is_file($path)) {
         include_once $path;
+        return true;
     } else {
-        $this->_throwError('Could not load class: '.$className);
+        return false;
     }
 }
 spl_autoload_register('load');

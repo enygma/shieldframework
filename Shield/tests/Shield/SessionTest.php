@@ -25,18 +25,19 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         global $_SESSION;
 
         $this->_di      = new Di();
-        $this->_filter  = new Filter($this->_di);
-        $this->_di->register($this->_filter);
+        $this->_filter  = new Filter($this->_config);
+        $this->_input   = new Input($this->_filter);
+        //$this->_config  = new Config();
 
-        $this->_input   = new Input($this->_di);
-        $this->_config  = new Config($this->_di);
-        $this->_di->register(array(
-            $this->_input, $this->_config
-        ));
+        // $this->_di->register($this->_filter);
 
-        $this->_session = new Session($this->_di);
+        // $this->_di->register(array(
+        //     $this->_input, $this->_config
+        // ));
 
-        $this->_di->register($this->_session);
+        $this->_session = new Session();
+
+        //$this->_di->register($this->_session);
 
         session_start();
     }
