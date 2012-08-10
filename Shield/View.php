@@ -2,7 +2,7 @@
 
 namespace Shield;
 
-class Template extends Base
+class View extends Base
 {
     private $templateDir = null;
     private $filter      = null;
