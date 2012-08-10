@@ -14,7 +14,7 @@ class ViewTest extends \PHPUnit_Framework_TestCase
         $this->_di = new Di();
         Config::load();
         $this->_filter = new Filter($this->_config);
-        $this->_template = new Template($this->_filter);
+        $this->_template = new View($this->_filter);
 
         //$this->_di->register(new View($this->_template));
     }
