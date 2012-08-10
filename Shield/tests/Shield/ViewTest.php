@@ -2,7 +2,7 @@
 
 namespace Shield;
 
-class TemplateTest extends \PHPUnit_Framework_TestCase
+class ViewTest extends \PHPUnit_Framework_TestCase
 {
     private $_template = null;
     private $_di       = null;

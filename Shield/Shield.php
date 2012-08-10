@@ -81,7 +81,7 @@ class Shield
         $bs = new Bootstrap();
 
         $filter = new Filter();
-        $this->template = new Template($filter);
+        $this->template = new View($filter);
 
         // set up the view and logger objects
         $this->log   = new Log();
