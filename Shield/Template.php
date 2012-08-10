@@ -12,7 +12,7 @@ class Template extends Base
     public function __construct(\Shield\Filter $filter)
     {
         $this->filter = $filter;
-        $this->setTemplateDir();
+        $this->setViewDir();
     }
 
     /**
@@ -53,7 +53,7 @@ class Template extends Base
      * @param string $index Property name
      * @param mixed  $value Property value
      * 
-     * @return object $this Current Template instance
+     * @return object $this Current View instance
      */
     public function set($index, $value=null)
     {
@@ -73,7 +73,7 @@ class Template extends Base
      * @param string $index  Property name
      * @param mixed  $filter Either a filter type or a closure
      * 
-     * @return object $this Template instance
+     * @return object $this View instance
      */
     public function filter($index, $filter=null)
     {
@@ -109,7 +109,7 @@ class Template extends Base
      * 
      * @return string Full path to templates directory
      */
-    public function getTemplateDir()
+    public function getViewDir()
     {
         return $this->templateDir;
     }
@@ -121,7 +121,7 @@ class Template extends Base
      * 
      * @return null
      */
-    public function setTemplateDir($dir=null)
+    public function setViewDir($dir=null)
     {
         // see if the path is valid
         $templatePath = ($dir !== null) ? $dir : __DIR__.'/../app/views';
@@ -194,7 +194,7 @@ class Template extends Base
         header('Content-Type: '.$contentType.'; charset='.$charset);
 
         // first see if what we've been given is a file
-        $templateFile = $this->getTemplateDir().'/'.$template.'.php';
+        $templateFile = $this->getViewDir().'/'.$template.'.php';
 
         // run through our properties and filter
         foreach ($this->_properties as $index => $value) {
