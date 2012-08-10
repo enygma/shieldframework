@@ -74,18 +74,16 @@ class Shield
     private function init()
     {
         // init the config and read it in (if it exists)
-        //$this->config = new Config();
-        //$this->config->load();
         Config::load();
 
         $bs = new Bootstrap();
 
-        $filter = new Filter();
-        $this->template = new View($filter);
+        $this->filter = new Filter();
 
         // set up the view and logger objects
         $this->log   = new Log();
-        $this->input = new Input($filter);
+        $this->input = new Input($this->filter);
+        $this->view = new View($this->filter, $this->input);
     }
 
     /**
@@ -206,7 +204,7 @@ class Shield
         $this->log->log('ROUTE MATCH ['.strtoupper($method).']: '.$uri);
         $routeClosure = $this->routes[$method][$uri]($matches);
 
-        $content = $this->template->render($routeClosure);
+        $content = $this->view->render($routeClosure);
         echo $content;
     }
 
