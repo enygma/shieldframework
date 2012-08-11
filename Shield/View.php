@@ -202,10 +202,21 @@ class View extends Base
         }
 
         if (is_file($templateFile)) {
-            extract($this->_properties);
-            ob_start();
-            include_once $templateFile;
-            return ob_get_clean();
+
+            // scope in the tempate extraction
+            $result = function($file,array $data=array()) {
+                ob_start();
+                extract($this->_properties);
+                try {
+                    include $file;
+                } catch(\Exception $e) {
+                    ob_end_clean();
+                    throw $e;
+                }
+                return ob_get_clean();
+            };
+
+            return $result($templateFile, $this->_properties);
 
         } else {
             // it's just a string! fall back on str_replace
