@@ -132,7 +132,7 @@ Bound Configuration
 -----------------
 You can also specify some configuration options linked directly to the route/closure combination. Here's an example:
 
-```
+```php
 <?php
 include_once '../Shield/Shield.php';
 $app = new Shield\Shield();
