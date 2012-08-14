@@ -110,15 +110,15 @@ $app->get('/foo([0-9]+)', function($matches) {
 
 Shield will try to match exact routes first, but then fall back on the regex routing checks. In th eabove example
 we're matching a route like `/foo123`. You'll notice that the first argument for the method is the routing matches as 
-pulled from the [preg_match](http://php.net/preg_match) PHP method. You can use whaever preg-based expression you
+pulled from the [preg_match](http://php.net/preg_match) PHP method. You can use whatever preg-based expression you
 want to use and have the values returned to you in the `$matches` value. So:
 
-```
+```php
 <?php
 include_once '../Shield/Shield.php';
 $app = new Shield\Shield();
 
-$app>get('/foo([0-9]+)', function($matches){
+$app->get('/foo([0-9]+)', function($matches){
     print_r($matches);
 });
 ```
@@ -132,7 +132,7 @@ Bound Configuration
 -----------------
 You can also specify some configuration options linked directly to the route/closure combination. Here's an example:
 
-```
+```php
 <?php
 include_once '../Shield/Shield.php';
 $app = new Shield\Shield();
