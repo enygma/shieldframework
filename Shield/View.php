@@ -206,7 +206,7 @@ class View extends Base
             // scope in the tempate extraction
             $result = function($file,array $data=array()) {
                 ob_start();
-                extract($data);
+                extract($data, EXTR_SKIP);
                 try {
                     include $file;
                 } catch(\Exception $e) {
