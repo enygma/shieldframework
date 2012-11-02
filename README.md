@@ -123,7 +123,22 @@ $app->get('/foo([0-9]+)', function($matches){
 });
 ```
 
-You would get `Array ( [0] => /foo123 [1] => 123 )` in the `$matches` variable.
+You would get `Array ( [1] => 123 )` in the `$matches` variable.
+
+You can also use named parameters in your routes too:
+
+```php
+include_once '../Shield/Shield.php';
+$app = new Shield\Shield();
+
+$app->get('/params/[:t1]/[:t2]', function($matches){
+    return $app->view->render('First Parameter: '.$matches['t1']);
+});
+```
+
+If your route is `/params/123/456` you'll get:
+
+`Array ( [t1] => 123, [t2] => 456 )` in the `$matches` variable.
 
 *NOTE:* DO NOT directly use the values from this array - there is currently no filtering on these values
 so there is potential for exploitation.

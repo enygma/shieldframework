@@ -11,6 +11,13 @@ class Shield
     private $routes  = array();
 
     /**
+     * Contains any paramaters passed in the URL
+     *   Ex.: /param/[:t1]/[:t2]
+     * @var array
+     */
+    private $params = array();
+
+    /**
      * Logging object (Shield\Log)
      * @var object
      */
@@ -105,8 +112,21 @@ class Shield
         }
 
         if (isset($args[1])) {
+        
+            // see if the path includes params
+            if (strpos($path, ':') !== false) {
+                preg_match_all('/\[(.+?)\]/', $path, $params);
+
+                // and replace the values in the path
+                foreach ($params[1] as $p) {
+                    $path = str_replace('/['.$p.']','/(.+?)', $path);
+                }
+                $this->params[$func][$path] = $params[1];
+            }
+
             $this->routes[$func][$path] = $args[1];
-            $this->log->log('SETTING PATH ['.strtoupper($func).']: '.$path);    
+
+            $this->log->log('SETTING PATH ['.strtoupper($func).']: '.$path);
         } else {
             $this->throwError('No path to set for : '.strtoupper($func));
             $this->log->log('NO PATH TO SET ['.strtoupper($func).']: '.$path);    
@@ -165,9 +185,12 @@ class Shield
             $found = false;
 
             if (isset($this->routes[$method])) {
+
                 // loop through our routes and see if there's a regex match
                 foreach ($this->routes[$method] as $route => $handler) {
                     if (preg_match('#^'.$route.'$#', $uri, $matches) === 1 && $found == false) {
+                        // drop the first value, it's the full URL
+                        $matches = array_values(array_slice($matches,1));
                         $found = true;
                         $this->routeMatch($method, $route, $matches);
                     }
@@ -202,8 +225,25 @@ class Shield
 
         // route match!
         $this->log->log('ROUTE MATCH ['.strtoupper($method).']: '.$uri);
-        $routeClosure = $this->routes[$method][$uri]($matches);
 
+        //see if we have params to match the items to
+        if ($matches !== null && isset($this->params[$method][$uri])) {
+            $params = $this->params[$method][$uri];
+
+            // match them up
+            $tmp = array();
+            foreach ($matches as $index => $match) {
+                if (isset($params[$index])) {
+                    $param = str_replace(':','',$params[$index]);
+                    $tmp[$param] = $match;
+                }
+            }
+            if (!empty($tmp)){
+                $matches = $tmp;
+            }
+        }
+
+        $routeClosure = $this->routes[$method][$uri]($matches);
         $content = $this->view->render($routeClosure);
         echo $content;
     }
